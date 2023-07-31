@@ -1,0 +1,8 @@
+GET https://localhost:8080/instagram/adaccounts
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY4MzIwOTkzMCwiZXhwIjoxNjg1ODAxOTMwfQ._xuwyHrBTF7OdEp76O3vTsrt2VRjI7XdJ5jdvkgHIAA
+Content-Type: application/json
+###
+
+GET http://localhost:8080/instagram/act_57477628/accounts
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY4MzIwOTkzMCwiZXhwIjoxNjg1ODAxOTMwfQ._xuwyHrBTF7OdEp76O3vTsrt2VRjI7XdJ5jdvkgHIAA
+Content-Type: application/json

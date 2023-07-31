@@ -1,0 +1,49 @@
+GET http://localhost:8080/automations
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY4MzIwOTkzMCwiZXhwIjoxNjg1ODAxOTMwfQ._xuwyHrBTF7OdEp76O3vTsrt2VRjI7XdJ5jdvkgHIAA
+
+###
+GET http://localhost:8080/automations/page/facebook
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY4MzIwOTkzMCwiZXhwIjoxNjg1ODAxOTMwfQ._xuwyHrBTF7OdEp76O3vTsrt2VRjI7XdJ5jdvkgHIAA
+
+###
+
+GET http://localhost:8080/automations/642ae0b7df0e13ade643e3ef
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NDQ0ZGQyYjk5YjQ1MzFiOGY2NWFmZCIsImlhdCI6MTY4MjE5Nzk3NiwiZXhwIjoxNjg0Nzg5OTc2fQ.JnZx2ZADC6VHbDd_nz7_RSxgwLP6hqfRZzb1VFREwFk
+###
+
+POST http://localhost:8080/automations 
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY5MDI3ODQ1MiwiZXhwIjoxNjkyODcwNDUyfQ.65zIDGlJqRMAshQKlDNF8BS4Q7cehOvLQ9uadwUrOtc
+Content-Type: application/json
+
+{
+    "page": {
+        "pageId": "facebook",
+        "name": "Facebook",
+        "picture": "https://www.facebook.com/images/fb_icon_325x325.png",
+        "platform": "twitter"
+    },
+    "automation":{
+        "objective": "ENGAGEMENT",
+        "dailyBudget": 10000,
+        "campaign": {
+            "id": "a5s6df4",
+            "name": "Campaign 1"
+        },
+        "adAccountId": "a5s6df4",
+        "platform": "twitter"
+    }
+}
+###
+
+PUT http://localhost:8080/automations/643149cc9f1221c975183d52/toggle
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NDQ0ZGQyYjk5YjQ1MzFiOGY2NWFmZCIsImlhdCI6MTY4MjE5Nzk3NiwiZXhwIjoxNjg0Nzg5OTc2fQ.JnZx2ZADC6VHbDd_nz7_RSxgwLP6hqfRZzb1VFREwFk
+Content-Type: application/json
+
+{
+    "status": "on"
+}
+###
+
+DELETE http://localhost:8080/automations/6458bdc003a13a4fef72896f
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY4MzIwOTkzMCwiZXhwIjoxNjg1ODAxOTMwfQ._xuwyHrBTF7OdEp76O3vTsrt2VRjI7XdJ5jdvkgHIAA
+Content-Type: application/json

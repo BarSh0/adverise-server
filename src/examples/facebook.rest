@@ -1,0 +1,155 @@
+POST http://localhost:8080/facebook/campaigns
+Authorization: 643137dab8f9da95070c6a63
+Content-Type: application/json
+
+{
+    "accessToken": "EAAe9FnaGY5gBADATUHUlynIZBoX8KZCCPQ1XIlQsuJ1AdrZAs7sAlZASDX5j0rBmfZCUqhZApV1ZBq4TwUZAWmheDqdCghqNeevNZBBZAp1beFtT7DVHpd7YXbVsC56ui0plJC79ouKp00q68ZAUxbZBZAgGx2uuoWdG8caK9RXafjeFKow7pxyQMZBeEwlt5FYCDZCc3wO11V5eLbjrFCQJSHTAG1DhZCyovZB0pESUiTXQWs1CNGVonlQQyyEWf",
+    "campaign": {
+        "accountId": "act_387500915456303",
+        "dailyBudget": 1000,
+        "pageName": "test",
+        "objective": "POST_ENGAGEMENT"
+    }
+}
+
+###
+
+GET http://localhost:8080/facebook/adaccounts
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY4NjQ4ODEyNywiZXhwIjoxNjg5MDgwMTI3fQ.s8o2fWaIUApYlHtkQ4K2gibh2OW-dNqoAVinOSwhUMI
+Content-Type: application/json
+
+###
+GET http://localhost:8080/facebook/act_387500915456303/accounts
+Authorization: 643137dab8f9da95070c6a63
+Content-Type: application/json
+
+{
+    "accessToken":"EAAe9FnaGY5gBAERaSzeQTgEmsFMF38tmeUtVFklbJcH8nhANwQxCdQFG4Br4fx1HwC4kg0cgvZBSN4ZB3gitbekuRgthgCsVbFdyXRRzw92QZAwvll9vA8SItZCD9XVkZB6PtGtKIGNPzHutVasdiexZB40LZAZBC3XffRagbVjLypwZAD94qMmDPGOZCVBRZA2HUnmQpqZA49zwQkjvE3ARc6EHKc0IVOeA7xL6pQciK4gXltLF3BWFLH8H"
+}
+
+###
+
+POST http://localhost:8080/facebook/create
+Authorization: 643137dab8f9da95070c6a63
+Content-Type: application/json
+
+{
+    "accountId": "act_387500915456303",
+    "audiences": [
+        {
+            "id": "23851571181350575",
+            "name": "קהל ישראלי"
+        }
+    ],
+    "properties": {
+        "adPauseTime": 24,
+        "dailyBudget": 4000,
+        "objective": "POST_ENGAGEMENT"
+    },
+    "page":{
+        "pageId": "2457972897588294",
+        "name": "שקל שושני סוכנות לביטוח 2009 בעמ",
+        "picture": "https://scontent.ftlv20-1.fna.fbcdn.net/v/t1.6435-1/67389838_2463096290409288_7090828170600906752_n.png?stp=cp0_dst-png_p50x50&_nc_cat=101&ccb=1-7&_nc_sid=dbb9e7&_nc_ohc=5ePS_e7XW1wAX_0REec&_nc_oc=AQkVyKWnwXRoJl8OhcJN8PPFXcoERrfNd2m2A6W_YW4fLfonFJ7vtcZDR4JzvR0V0nhkGIvuXVKQ6wnvTwv_xx7x&_nc_ht=scontent.ftlv20-1.fna&edm=AJdBtusEAAAA&oh=00_AfCraGghVio0x_WgroKIEbrjAeQlBDh5xzvLZnMvWqlPxg&oe=6461059C",
+        "platform": "facebook"
+    }
+}
+
+###
+
+GET http://localhost:8080/facebook/adaccounts
+Authorization: 64397e16b8f9da95070c6a70
+Content-Type: application/json
+
+{
+    "accessToken": "EAAe9FnaGY5gBAEbzyBZCPoCMv7beprYePOLh6brPuedRTU9psE5ZC18hslnnWHA5hM34YCvpMrEsjioPaQv3psBZCXEtbAldkLB3MnZB77qZAwzHX4tRysWKc2hBK1D7hgKQktwZBhFZAj8ZCZBba5oFinlgwA3jaBweWD4PFgkL74gXADyYhUEflc86n3L7ZClZArSQ5tauZBZCsfaJgowIVemDRm6tn6QweZAdejl0ZA0fu9Sz7oKFkwZAv8Nm"
+}
+
+###
+
+POST http://localhost:8080/facebook/webhook
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY4NjY1NDMzMywiZXhwIjoxNjg5MjQ2MzMzfQ.-HuNhILmKN7F17DUe1wb3NVMjhm9HyJ-AOWyl04K9Wo
+Content-Type: application/json
+
+{
+    "entry": [
+        {
+            "changes": [
+                {
+                    "field": "feed",
+                    "value": {
+                        "created_time": 1684656306,
+                        "from": {
+                            "id": "110435530628957",
+                            "name": "תמר קוסמטיקס - המרכז הארצי לייבוא ושיווק מוצרים אונליין לקוסמטיקאיות"
+                        },
+                        "item": "photo",
+                        "link": "https://scontent-lga3-1.xx.fbcdn.net/v/t39.30808-6/348292889_918003722613081_1862612367075652423_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=8024bb&_nc_ohc=7JwUjC_-I9AAX_wvyiq&_nc_ht=scontent-lga3-1.xx&edm=AEcWyTcEAAAA&oh=00_AfAeA_QCj_dsJh3mD-AXknbxDzS3JpN4Gc7GIWXMVjdAog&oe=646EBE18",
+                        "message": "השעווה שהולכת להכין את הלקוחות שלך לקיץ חלק במיוחד.. ⁠\n\nשעווה מתקפלת של  depileve אינטימה רוזין להסרת שיער עשויה משמן אווה וחמאת זרעי קקאו להגנה, לחות והרגעה של איזורים אינטימיים. \n\nמחכים לך באתר עם עוד מגוון שעוות מתקלפות איכותיות. \nבואי להתחדש עוד היום!\nלפרטים נוספים לחצי >> https://bit.ly/3pLXpiJ. ⁠\n⁠\n*משלוחים בכל הארץ | אספקה עד 4 ימי עסקים | משלוח חינם בקניה מעל 289 ש\"ח | ט.ל.ח",
+                        "photo_id": "729298152293575",
+                        "post_id": "110435530628957_729298198960237",
+                        "published": 1,
+                        "verb": "add"
+                    }
+                }
+            ],
+            "id": "110435530628957",
+            "time": 1684656321
+        }
+    ],
+    "object": "page"
+}
+
+# {
+#   "entry": [
+#     {
+#       "changes": [
+#         {
+#           "field": "feed",
+#           "value": {
+#             "created_time": 1684656306,
+#             "from": {
+#               "id": "123456789",
+#               "name": "John Doe"
+#             },
+#             "item": "note",
+#             "note_id": "987654321",
+#             "post_id": "123456789_987654321",
+#             "published": 1,
+#             "verb": "add"
+#           }
+#         }
+#       ],
+#       "id": "123456789",
+#       "time": 1684656321
+#     }
+#   ],
+#   "object": "page"
+# }
+
+# {
+#     "entry": [
+#         {
+#             "changes": [
+#                 {
+#                     "field": "feed",
+#                     "value": {
+#                         "created_time": 1684840940,
+#                         "from": {
+#                             "id": "230609070385496",
+#                             "name": "מרינה פטריות הגליל"
+#                         },
+#                         "item": "video",
+#                         "link": "https://scontent.xx.fbcdn.net/v/t50.12441-16/348421622_6021058814687587_1286578627349719543_n.mp4?_nc_cat=106&ccb=1-7&_nc_sid=985c63&efg=eyJybHIiOjEyMTgsInJsYSI6NTEyLCJ2ZW5jb2RlX3RhZyI6Inhwdl9zZF9wcm9ncmVzc2l2ZSJ9&_nc_ohc=jCwRoTu_BywAX8R2OJ4&_nc_ht=scontent.xx&oh=00_AfCEHyRa-Scr7VKFcTZEyocJY4p-_S08NQ-liy1J6RDz9Q&oe=6471150F",
+#                         "post_id": "230609070385496_1008999243419527",
+#                         "published": 1,
+#                         "verb": "add",
+#                         "video_id": "1008999243419527"
+#                     }
+#                 }
+#             ],
+#             "id": "230609070385496",
+#             "time": 1684840953
+#         }
+#     ],
+#     "object": "page"
+# }

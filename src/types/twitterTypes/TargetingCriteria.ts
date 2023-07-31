@@ -1,0 +1,47 @@
+export enum LocationType {
+  COUNTRIES = 'COUNTRIES',
+  REGIONS = 'REGIONS',
+  METROS = 'METROS',
+  CITIES = 'CITIES',
+  POSTAL_CODES = 'POSTAL_CODES',
+}
+export enum OperatorType {
+  EQ = 'EQ',
+  NE = 'NE',
+  GTE = 'GTE',
+  LT = 'LT',
+}
+export enum TargetingType {
+  AGE = 'AGE',
+  DEVICE = 'DEVICE',
+  EVENT = 'EVENT',
+  CAMPAIGN_ENGAGEMENT = 'CAMPAIGN_ENGAGEMENT',
+  CAMPAIGN_ENGAGEMENT_LOOKALIKE = 'CAMPAIGN_ENGAGEMENT_LOOKALIKE',
+  CONVERSATION = 'CONVERSATION',
+  ENGAGEMENT_TYPE = 'ENGAGEMENT_TYPE',
+  FOLLOWERS_OF_USER = 'FOLLOWERS_OF_USER',
+  GENDER = 'GENDER',
+  INTEREST = 'INTEREST',
+  LANGUAGE = 'LANGUAGE',
+  LIVE_TV_EVENT = 'LIVE_TV_EVENT',
+  LOCATION = 'LOCATION',
+  NETWORK_ACTIVATION_DURATION = 'NETWORK_ACTIVATION_DURATION',
+  NETWORK_OPERATOR = 'NETWORK_OPERATOR',
+  PLATFORM = 'PLATFORM',
+  PLATFORM_VERSION = 'PLATFORM_VERSION',
+  SIMILAR_TO_FOLLOWERS_OF_USER = 'SIMILAR_TO_FOLLOWERS_OF_USER',
+  TV_SHOW = 'TV_SHOW',
+  USER_ENGAGEMENT = 'USER_ENGAGEMENT',
+  USER_ENGAGEMENT_LOOKALIKE = 'USER_ENGAGEMENT_LOOKALIKE',
+  WIFI_ONLY = 'WIFI_ONLY',
+}
+/**
+ * Represents targeting criteria for a Twitter Ads API request.
+ * @count Default: 200 ,Min: 1, Max: 1000
+ */
+export type TargetingCriteriaParams = {
+  line_item_id: string;
+  operator_type: OperatorType;
+  targeting_type: TargetingType;
+  targeting_value: string;
+};

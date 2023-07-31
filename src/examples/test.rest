@@ -1,0 +1,13 @@
+PUT http://localhost:8080/facebook/toggle/6458be9a03a13a4fef72897f
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY4MzIwOTkzMCwiZXhwIjoxNjg1ODAxOTMwfQ._xuwyHrBTF7OdEp76O3vTsrt2VRjI7XdJ5jdvkgHIAA
+Content-Type: application/json
+
+{
+    "campaignId": "2385335449180575",
+    "status": "PAUSED"
+}
+
+###
+
+GET http://localhost:8080/webhook
+Content-Type: application/application/json

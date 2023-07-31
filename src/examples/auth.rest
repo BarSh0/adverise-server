@@ -1,0 +1,31 @@
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+{
+  "username": "test1",
+  "password": "test",
+  "email": "test1"
+}
+###
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+{
+  "email": "test1",
+  "password": "test"
+}
+###
+GET http://localhost:8080/auth/refresh
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NDNlZTZmNzk2YzRiYmNlNTAxOTUyMCIsImlhdCI6MTY4MjE3NDY3OCwiZXhwIjoxNjgyMTc0Njg4fQ.DLPMi65qPj2H9vmA3M4EwFcOHSRZZR_b110U1EnBRIg
+###
+GET http://localhost:8080/auth/verify
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NDNlZTZmNzk2YzRiYmNlNTAxOTUyMCIsImlhdCI6MTY4MjE3NDY3OCwiZXhwIjoxNjgyMTc0Njg4fQ.DLPMi65qPj2H9vmA3M4EwFcOHSRZZR_b110U1EnBRIg
+###
+GET http://localhost:8080/auth/twitter
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NDNlZTZmNzk2YzRiYmNlNTAxOTUyMCIsImlhdCI6MTY4MjE3NDY3OCwiZXhwIjoxNjgyMTc0Njg4fQ.DLPMi65qPj2H9vmA3M4EwFcOHSRZZR_b110U1EnBRIg
+###
+GET http://localhost:8080/users/me
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc2NDJiYjE5OTQxOWRkNzQ3MWQzNiIsImlhdCI6MTY5MDc4ODkyMywiZXhwIjoxNjkzMzgwOTIzfQ.ahjjGgQk_IMWiU9bBNf5eaISjpQzChOIbCXzaWWp1u8
+###

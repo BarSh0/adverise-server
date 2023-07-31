@@ -1,0 +1,40 @@
+GET http://localhost:8080/twitter/adaccounts
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY5MDI3ODQ1MiwiZXhwIjoxNjkyODcwNDUyfQ.65zIDGlJqRMAshQKlDNF8BS4Q7cehOvLQ9uadwUrOtc
+Content-Type: application/json
+###
+GET http://localhost:8080/twitter/18ce55kxioh/accounts
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY5MDI3ODQ1MiwiZXhwIjoxNjkyODcwNDUyfQ.65zIDGlJqRMAshQKlDNF8BS4Q7cehOvLQ9uadwUrOtc
+Content-Type: application/json
+###
+GET http://localhost:8080/twitter/18ce55bc6x0/campaigns
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY5MDI3ODQ1MiwiZXhwIjoxNjkyODcwNDUyfQ.65zIDGlJqRMAshQKlDNF8BS4Q7cehOvLQ9uadwUrOtc
+Content-Type: application/json
+###
+GET http://localhost:8080/twitter/18ce55kxioh/funding-instruments
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY5MDI3ODQ1MiwiZXhwIjoxNjkyODcwNDUyfQ.65zIDGlJqRMAshQKlDNF8BS4Q7cehOvLQ9uadwUrOtc
+Content-Type: application/json
+###
+POST http://localhost:8080/twitter/18ce55kxioh/campaigns
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY5MDI3ODQ1MiwiZXhwIjoxNjkyODcwNDUyfQ.65zIDGlJqRMAshQKlDNF8BS4Q7cehOvLQ9uadwUrOtc
+Content-Type: application/json
+
+{
+    "campaignName": "test campaign",
+    "targetingValue": "746cc5651750e057",
+    "dailyBudget": 1000000,
+    "promotedUserId": "1588669341599498244"
+}
+###
+POST http://localhost:8080/twitter/zapier
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY5MDI3ODQ1MiwiZXhwIjoxNjkyODcwNDUyfQ.65zIDGlJqRMAshQKlDNF8BS4Q7cehOvLQ9uadwUrOtc
+Content-Type: application/json
+
+{
+    "tweet_id": "1668146724806828033",
+    "user_id": "1588669341599498244"
+}
+###
+GET http://localhost:8080/twitter/test
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY5MDI3ODQ1MiwiZXhwIjoxNjkyODcwNDUyfQ.65zIDGlJqRMAshQKlDNF8BS4Q7cehOvLQ9uadwUrOtc
+Content-Type: application/json
+###
