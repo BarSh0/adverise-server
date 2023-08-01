@@ -57,15 +57,14 @@ export const getCampaigns = async (req: Request, res: Response, next: NextFuncti
 export const promoteTweet = async (req: Request, res: Response, next: NextFunction) => {
   const { tweet_id, user_id } = req.body;
   console.log(req.body);
-  const appUserId = req.body.user._id;
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
   if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
-  const page = await Page.findOne({ pageId: user_id, user: appUserId });
+  const page = await Page.findOne({ pageId: user_id });
   if (!page) {
     // send mail to the buisness that the app tried to promote a tweet but the page is not connected
     throw new AppError(404, 'Page not found');
   }
-  const automation = await Automation.findOne({ page: page._id, user: appUserId });
+  const automation = await Automation.findOne({ page: page._id });
   if (!automation) throw new AppError(404, 'Automation not found');
   if (automation.status !== AutomationStatusEnum.ACTIVE) {
     // send mail that the app tried to promote a tweet but the automation is not active

@@ -18,7 +18,7 @@ router.use('/automations', userAccessValidate, automationRoutes);
 router.use('/pages', pageRoutes);
 router.use('/facebook', userAccessValidate, facebookRoutes);
 router.use('/instagram', userAccessValidate, instagramRoutes);
-router.use('/twitter', userAccessValidate, twitterRoutes);
+router.use('/twitter', twitterRoutes);
 router.use('/auth', authRoutes);
 router.use('/users', usersRoutes);
 router.get('/twitter-webhook', async (req, res) => {
