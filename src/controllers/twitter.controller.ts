@@ -8,6 +8,7 @@ import { PromotedTweetParams } from '../types/twitterTypes/PromotedTweet';
 import { Automation, AutomationStatusEnum } from '../database/models/automation.model';
 import { Page } from '../database/models/page.model';
 import { IPost, Post } from '../database/models/post.model';
+import { IUser } from '../database/models/user.model';
 
 export const getAdAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
@@ -57,19 +58,20 @@ export const getCampaigns = async (req: Request, res: Response, next: NextFuncti
 export const promoteTweet = async (req: Request, res: Response, next: NextFunction) => {
   const { tweet_id, user_id } = req.body;
   console.log(req.body);
-  const { accessToken, secretToken } = req.body.user.platforms.twitter;
-  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
   const page = await Page.findOne({ pageId: user_id });
   if (!page) {
     // send mail to the buisness that the app tried to promote a tweet but the page is not connected
     throw new AppError(404, 'Page not found');
   }
-  const automation = await Automation.findOne({ page: page._id });
+  const automation = await Automation.findOne({ page: page._id }).populate('user');
   if (!automation) throw new AppError(404, 'Automation not found');
   if (automation.status !== AutomationStatusEnum.ACTIVE) {
     // send mail that the app tried to promote a tweet but the automation is not active
     throw new AppError(400, 'Automation is not active');
   }
+  const user = automation.user as any;
+  const { accessToken, secretToken } = user.platforms.twitter;
+  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
 
   const adAccountId = automation.adAccountId;
   const promoteTweetReq: PromotedTweetParams = {
