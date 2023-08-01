@@ -56,6 +56,7 @@ export const getCampaigns = async (req: Request, res: Response, next: NextFuncti
 
 export const promoteTweet = async (req: Request, res: Response, next: NextFunction) => {
   const { tweet_id, user_id } = req.body;
+  console.log(req.body);
   const appUserId = req.body.user._id;
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
   if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
