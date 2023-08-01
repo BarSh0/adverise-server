@@ -1,17 +1,30 @@
 import mongoose, { ConnectOptions } from 'mongoose';
 
 const mongoConnect = () => {
-  mongoose.connect('mongodb://0.0.0.0:27017/adverise', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    autoIndex: true,
-  } as ConnectOptions);
+  const devURL = process.env.LOCAL_MONGO_URL as string;
+  const prodURL = process.env.PROD_MONGO_URL as string;
+  const mode = process.env.NODE_ENV as string;
+  const URL = mode === 'development' ? devURL : prodURL;
+  console.log(process.env.NODE_ENV);
 
-  const db = mongoose.connection;
+  return new Promise<void>((resolve, reject) => {
+    mongoose.connect(URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      autoIndex: true,
+    } as ConnectOptions);
 
-  db.on('error', console.error.bind(console, 'connection error:'));
-  db.once('open', function () {
-    console.log('Connected to MongoDB database');
+    const db = mongoose.connection;
+
+    db.on('error', (err) => {
+      console.error('Connection error:', err);
+      reject(err);
+    });
+
+    db.once('open', () => {
+      console.log(`Connected to MongoDB with ${mode} mode !`);
+      resolve();
+    });
   });
 };
 
