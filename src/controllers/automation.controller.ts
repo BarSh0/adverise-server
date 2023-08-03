@@ -40,12 +40,10 @@ export const postAutomation = async (req: Request, res: Response) => {
 
 export const deleteAutomation = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const automation = await Automation.findOne({ _id: id, user: req.body.user._id });
-  if (!automation) throw new Error('Automation not found');
-  await automation.deleteOne();
+  const automation = await Automation.findByIdAndDelete(id);
 
   logger.log('info', 'deleteAutomation called successfully');
-  res.status(200).send({ automation });
+  res.status(200).send({ data: automation, message: 'Automation deleted successfully' });
 };
 
 export const toggleStatus = async (req: Request, res: Response, next: NextFunction) => {

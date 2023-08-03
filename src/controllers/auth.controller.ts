@@ -29,11 +29,8 @@ export const handleRegister = async (req: Request, res: Response) => {
 };
 
 export const handleLogin = async (req: Request, res: Response) => {
-  console.log('here');
   const { email, password } = req.body;
-
   if (!email || !password) throw new AppError(HttpCode.BAD_REQUEST, 'Email or password not found');
-
   const user = await User.findOne({ email });
   if (!user) throw new AppError(HttpCode.NOT_FOUND, `User with email [${email}] not found`);
 
@@ -44,7 +41,7 @@ export const handleLogin = async (req: Request, res: Response) => {
   const accessToken = jwt.sign({ id: user._id }, jwtSecretKey, { expiresIn: '30d' });
 
   logger.log('info', `User ${user.username} logged in successfully`);
-  res.send({ accessToken });
+  res.send({ data: accessToken, message: `Welcome ${user.username}!` });
 };
 
 export const handleRefresh = async (req: Request, res: Response) => {
@@ -62,3 +59,4 @@ export const handleRefresh = async (req: Request, res: Response) => {
     res.send({ accessToken: newAccessToken });
   });
 };
+

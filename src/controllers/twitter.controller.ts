@@ -1,14 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 import { AppError } from '../classes/AppError';
+import { Automation, AutomationStatusEnum } from '../database/models/automation.model';
+import { Page } from '../database/models/page.model';
+import { Post } from '../database/models/post.model';
 import { TwitterService } from '../services/twitterServices';
 import { newCampaignParams } from '../services/twitterServices/campaigns.service';
 import { EntityStatus, LineItemParams, Objective, Placements, ProductType } from '../types/twitterTypes/LineItem';
-import { OperatorType, TargetingCriteriaParams, TargetingType } from '../types/twitterTypes/TargetingCriteria';
 import { PromotedTweetParams } from '../types/twitterTypes/PromotedTweet';
-import { Automation, AutomationStatusEnum } from '../database/models/automation.model';
-import { Page } from '../database/models/page.model';
-import { IPost, Post } from '../database/models/post.model';
-import { IUser } from '../database/models/user.model';
+import { OperatorType, TargetingCriteriaParams, TargetingType } from '../types/twitterTypes/TargetingCriteria';
+import { User } from '../database/models/user.model';
+import jwt from 'jsonwebtoken';
 
 export const getAdAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
@@ -34,7 +35,17 @@ export const getAccounts = async (req: Request, res: Response, next: NextFunctio
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
   if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
   const { id } = req.params;
-  const result = await TwitterService.getAllAccounts(id, accessToken, secretToken);
+  const accounts = await TwitterService.getAllAccounts(id, accessToken, secretToken);
+  const promiseArray = accounts.map(async (account: any) => {
+    const accountMoreDetails = await TwitterService.User.getUserDetails(account.user_id, accessToken, secretToken);
+    const accountWithDetails = {
+      ...account,
+      name: accountMoreDetails.name,
+      picture: accountMoreDetails.profile_image_url,
+    };
+    return accountWithDetails;
+  });
+  const result = await Promise.all(promiseArray);
   res.send(result);
 };
 
@@ -52,6 +63,32 @@ export const getCampaigns = async (req: Request, res: Response, next: NextFuncti
   if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
   const { id } = req.params;
   const result = await TwitterService.Campaign.getAllCampaigns(id, accessToken, secretToken);
+  res.send(result);
+};
+
+export const getAudiences = async (req: Request, res: Response, next: NextFunction) => {
+  const { accessToken, secretToken } = req.body.user.platforms.twitter;
+  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
+  const { id } = req.params;
+  const result = await TwitterService.Audience.getAllAudiences(id, accessToken, secretToken);
+  res.send(result);
+};
+
+export const getAudienceById = async (req: Request, res: Response, next: NextFunction) => {
+  const { accessToken, secretToken } = req.body.user.platforms.twitter;
+  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
+  const { id, audienceId } = req.params;
+  const result = await TwitterService.Audience.getAudienceById(id, audienceId, accessToken, secretToken);
+  res.send(result);
+};
+
+export const getAllTargetingCriteria = async (req: Request, res: Response, next: NextFunction) => {
+  const { accessToken, secretToken } = req.body.user.platforms.twitter;
+  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
+  const { id } = req.params;
+  const lineItems = await TwitterService.LineItem.getAllLineItems(id, accessToken, secretToken);
+  const lineItemsIds = lineItems.map((lineitem: any) => lineitem.id);
+  const result = await TwitterService.getAllTargetingCriteria(id, lineItemsIds, accessToken, secretToken);
   res.send(result);
 };
 
@@ -111,7 +148,7 @@ export const promoteTweet = async (req: Request, res: Response, next: NextFuncti
 };
 
 export const createNewCampaign = async (req: Request, res: Response, next: NextFunction) => {
-  const { campaignName, dailyBudget, targetingValue, fundingInstrument } = req.body;
+  const { campaignName, dailyBudget, targetingValue, fundingInstrument, page } = req.body;
   const adAccountId = req.params.id;
   const promotedUserId = req.body.page.user_id;
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
@@ -132,6 +169,7 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
 
   const newLineItemReq: LineItemParams = {
     campaign_id: newCampaign.id,
+    name: campaignName,
     bid_amount_local_micro: dailyBudget * 100,
     product_type: ProductType.PROMOTED_TWEETS,
     objective: Objective.ENGAGEMENTS,
@@ -173,10 +211,10 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
     secretToken
   );
 
-  const page = {
-    pageId: promotedUserId,
-    name: promotedUserId, // until the api for getting the page name will be ready
-    picture: 'test',
+  const newPage = {
+    pageId: page.user_id,
+    name: page.name,
+    picture: page.picture,
     platform: 'twitter',
   };
 
@@ -192,7 +230,7 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
     platform: 'twitter',
   };
 
-  req.body.page = page;
+  req.body.page = newPage;
   req.body.automation = automation;
   next();
 };
@@ -243,4 +281,44 @@ export const test = async (req: Request, res: Response, next: NextFunction) => {
   const userId = '756201191646691328';
   const result = await TwitterService.test(userId);
   res.send(result);
+};
+
+export const signInWithTwitter = async (req: Request, res: Response, next: NextFunction) => {
+  const { email } = req.body;
+  const { oauthAccessToken, oauthTokenSecret } = req.body;
+  const user = await User.findOneAndUpdate(
+    { email },
+    {
+      $set: {
+        'platforms.twitter.accessToken': oauthAccessToken,
+        'platforms.twitter.secretToken': oauthTokenSecret,
+      },
+    },
+    { new: true }
+  );
+  if (user) {
+    const jwtSecretKey = process.env.JWT_SECRET_KEY as string;
+    const accessToken = jwt.sign({ id: user._id }, jwtSecretKey, { expiresIn: '30d' });
+    res.send({ data: accessToken, message: `Welcome Back ${user.username}` });
+    return;
+  }
+
+  const { displayName, photoUrl } = req.body;
+  const newUser = new User({
+    username: displayName,
+    email,
+    password: 'twitter',
+    picture: photoUrl,
+    platforms: {
+      twitter: {
+        accessToken: oauthAccessToken,
+        secretToken: oauthTokenSecret,
+      },
+    },
+  });
+  await newUser.save();
+  const jwtSecretKey = process.env.JWT_SECRET_KEY as string;
+  const accessToken = jwt.sign({ id: newUser._id }, jwtSecretKey, { expiresIn: '30d' });
+
+  res.send({ data: accessToken, message: `Welcome ${newUser.username}` });
 };

@@ -9,9 +9,6 @@ export type Platforms = {
   instagram?: Platform;
   linkedin?: Platform;
   tiktok?: Platform;
-  snapchat?: Platform;
-  pinterest?: Platform;
-  youtube?: Platform;
 };
 export type Platform = {
   isConnect: boolean;
@@ -24,6 +21,7 @@ interface IUser extends mongoose.Document {
   email: string;
   password: string;
   phone: string;
+  picture: string;
   address: string;
   city: string;
   platforms: Platforms;
@@ -34,6 +32,7 @@ const NewUserSchema = Joi.object({
   username: Joi.string().required(),
   email: Joi.string().required(),
   password: Joi.string().required(),
+  picture: Joi.string(),
   phone: Joi.string(),
   address: Joi.string(),
   city: Joi.string(),
@@ -53,6 +52,7 @@ const UserSchema = new mongoose.Schema(
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    picture: { type: String },
     phone: { type: String },
     address: { type: String },
     city: { type: String },

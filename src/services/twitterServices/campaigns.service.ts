@@ -1,4 +1,4 @@
-import newTwitterAdsAPI from './config';
+import { newTwitterAdsAPI } from './config';
 
 enum BudgetOptimization {
   CAMPAIGN = 'CAMPAIGN',

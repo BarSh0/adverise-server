@@ -9,6 +9,11 @@ router.get('/:id', withErrorHandler(Controllers.Automation.getAutomation));
 router.get('/page/:id', withErrorHandler(Controllers.Automation.getAutomationsByPage));
 router.post('/', withErrorHandler(Controllers.Automation.postAutomation));
 router.delete('/:id', withErrorHandler(Controllers.Automation.deleteAutomation));
+router.delete(
+  '/twitter/:id',
+  withErrorHandler(Controllers.Twitter.toggleStatus),
+  withErrorHandler(Controllers.Automation.deleteAutomation)
+);
 
 const automationRoutes = router;
 

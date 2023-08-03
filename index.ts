@@ -31,7 +31,7 @@ async function getProfilePictureUrl(user_id: string): Promise<string | null> {
 }
 
 // Replace the user_id with the one you have in your data
-const user_id = '756201191646691328';
+const user_id = '1588669341599498244';
 
 // Call the function to get the profile picture URL
 getProfilePictureUrl(user_id)

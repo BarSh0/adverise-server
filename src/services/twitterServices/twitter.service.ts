@@ -1,5 +1,5 @@
 import { LocationType, TargetingCriteriaParams } from '../../types/twitterTypes/TargetingCriteria';
-import newTwitterAdsAPI from './config';
+import { newTwitterAdsAPI } from './config';
 
 // need to be by userId
 export const getAllAdAccounts = async (accessToken: string, accessTokenSecret: string): Promise<any> => {
@@ -73,6 +73,29 @@ export const createTargetingCriteria = async (
         reject(error);
       } else {
         resolve(body);
+      }
+    });
+  });
+};
+
+export const getAllTargetingCriteria = async (
+  accountId: string,
+  lineItemsIds: string[],
+  accessToken: string,
+  accessTokenSecret: string
+): Promise<any> => {
+  const T = newTwitterAdsAPI(accessToken, accessTokenSecret);
+  const url = `accounts/${accountId}/targeting_criteria`;
+  const params = {
+    line_item_ids: lineItemsIds,
+  };
+  return new Promise((resolve, reject) => {
+    T.get(url, params, function (error: any, resp: any, body: any) {
+      if (error) {
+        console.error(error);
+        reject(error);
+      } else {
+        resolve(body.data);
       }
     });
   });

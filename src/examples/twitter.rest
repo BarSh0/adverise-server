@@ -3,11 +3,19 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2
 Content-Type: application/json
 ###
 GET http://localhost:8080/twitter/18ce55kxioh/accounts
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY5MDI3ODQ1MiwiZXhwIjoxNjkyODcwNDUyfQ.65zIDGlJqRMAshQKlDNF8BS4Q7cehOvLQ9uadwUrOtc
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc2NDJiYjE5OTQxOWRkNzQ3MWQzNiIsImlhdCI6MTY5MDgwNjEzOSwiZXhwIjoxNjkzMzk4MTM5fQ.1DoaYyndUITcqe1Q8Ub5rjvb7QpSvzV8dQeFCnh9Eac
 Content-Type: application/json
 ###
 GET http://localhost:8080/twitter/18ce55bc6x0/campaigns
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY5MDI3ODQ1MiwiZXhwIjoxNjkyODcwNDUyfQ.65zIDGlJqRMAshQKlDNF8BS4Q7cehOvLQ9uadwUrOtc
+Content-Type: application/json
+###
+GET http://localhost:8080/twitter/18ce55bc6x0/audiences
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc2NDJiYjE5OTQxOWRkNzQ3MWQzNiIsImlhdCI6MTY5MDk3NTU3NSwiZXhwIjoxNjkzNTY3NTc1fQ.Ehzw2TaumhQDebQjUZUTiAu8HDpQeH6BVp8cG7guT8Y
+Content-Type: application/json
+###
+GET http://localhost:8080/twitter/18ce55bc6x0/targeting-criteria
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc2NDJiYjE5OTQxOWRkNzQ3MWQzNiIsImlhdCI6MTY5MDk3NTU3NSwiZXhwIjoxNjkzNTY3NTc1fQ.Ehzw2TaumhQDebQjUZUTiAu8HDpQeH6BVp8cG7guT8Y
 Content-Type: application/json
 ###
 GET http://localhost:8080/twitter/18ce55kxioh/funding-instruments

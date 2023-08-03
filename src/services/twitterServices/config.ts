@@ -1,7 +1,8 @@
 import twitterCred from '../../../twitterCred';
+import Twit from 'twit';
 const TwitterAdsAPI = require('twitter-ads');
 
-const newTwitterAdsAPI = (accessToken: string, accessTokenSecret: string) => {
+export const newTwitterAdsAPI = (accessToken: string, accessTokenSecret: string) => {
   return new TwitterAdsAPI({
     consumer_key: twitterCred.consumer_key,
     consumer_secret: twitterCred.consumer_secret,
@@ -12,4 +13,11 @@ const newTwitterAdsAPI = (accessToken: string, accessTokenSecret: string) => {
   });
 };
 
-export default newTwitterAdsAPI;
+export const newTwitApi = (accessToken: string, accessTokenSecret: string) => {
+  return new Twit({
+    consumer_key: twitterCred.consumer_key,
+    consumer_secret: twitterCred.consumer_secret,
+    access_token: accessToken,
+    access_token_secret: accessTokenSecret,
+  });
+};

@@ -46,7 +46,7 @@ const AutomationSchema = new mongoose.Schema<IAutomation>(
     dailyBudget: { type: Number, required: true },
     objective: { type: String, required: true },
     postTypes: { type: [String], required: true },
-    page: { type: mongoose.Schema.Types.ObjectId, ref: 'Page', required: true },
+    page: { type: mongoose.Schema.Types.ObjectId, ref: 'Page', required: true, unique: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     posts: [{ type: mongoose.Schema.Types.ObjectId, default: [], ref: 'Post' }],
     status: {
