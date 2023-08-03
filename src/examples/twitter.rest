@@ -15,7 +15,7 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc2NDJiYjE5OTQx
 Content-Type: application/json
 ###
 GET http://localhost:8080/twitter/18ce55bc6x0/targeting-criteria
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc2NDJiYjE5OTQxOWRkNzQ3MWQzNiIsImlhdCI6MTY5MDk3NTU3NSwiZXhwIjoxNjkzNTY3NTc1fQ.Ehzw2TaumhQDebQjUZUTiAu8HDpQeH6BVp8cG7guT8Y
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Y2I4MmNlODk3OTg0ZTc3MGE5YWJiYSIsImlhdCI6MTY5MTA1OTg4MywiZXhwIjoxNjkzNjUxODgzfQ.PqEyE91d-YSOxU2k1fTaH6S5VCHa_L4mZAv5N6Zdi8Q
 Content-Type: application/json
 ###
 GET http://localhost:8080/twitter/18ce55kxioh/funding-instruments

@@ -89,7 +89,16 @@ export const getAllTargetingCriteria = async (req: Request, res: Response, next:
   const lineItems = await TwitterService.LineItem.getAllLineItems(id, accessToken, secretToken);
   const lineItemsIds = lineItems.map((lineitem: any) => lineitem.id);
   const result = await TwitterService.getAllTargetingCriteria(id, lineItemsIds, accessToken, secretToken);
-  res.send(result);
+  // make the result unic by targeting_value
+  const unicResult = result.reduce((acc: any, current: any) => {
+    const x = acc.find((item: any) => item.targeting_value === current.targeting_value);
+    if (!x) {
+      return acc.concat([current]);
+    } else {
+      return acc;
+    }
+  }, []);
+  res.send(unicResult);
 };
 
 export const promoteTweet = async (req: Request, res: Response, next: NextFunction) => {
@@ -187,9 +196,9 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
 
   const targetingCriteriaReq: TargetingCriteriaParams = {
     line_item_id: newLineItem.id,
-    operator_type: OperatorType.EQ,
-    targeting_type: TargetingType.LOCATION,
-    targeting_value: targetingValue,
+    operator_type: targetingValue.operator_type as OperatorType,
+    targeting_type: targetingValue.targeting_type as TargetingType,
+    targeting_value: targetingValue.targeting_value as string,
   };
 
   const targetingCriteria = await TwitterService.createTargetingCriteria(
