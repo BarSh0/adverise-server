@@ -1,10 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import mongoose from 'mongoose';
-import { Automation, AutomationStatusEnum, IAutomation } from '../database/models/automation.model';
-import logger from '../utils/logger';
-import { getModelByField } from '../database/queries/getters';
+import { Automation, AutomationStatusEnum } from '../database/models/automation.model';
 import { Page } from '../database/models/page.model';
-import { AppError } from '../classes/AppError';
+import { getModelByField } from '../database/queries/getters';
+import logger from '../utils/logger';
 
 export const getAllAutomations = async (req: Request, res: Response) => {
   const automations = await Automation.find({ user: req.body.user._id }).populate('page');
@@ -50,8 +48,9 @@ export const toggleStatus = async (req: Request, res: Response, next: NextFuncti
   const { id } = req.params;
   const { status } = req.body;
   const automation = await Automation.findById(id);
-  if (!automation) throw new AppError(404, 'Automation not found');
+  const error = new Error('Automation not found');
+  if (!automation) throw new Error('Automation not found');
   automation.status = status ? AutomationStatusEnum.ACTIVE : AutomationStatusEnum.PAUSED;
   await automation.save();
-  res.send(automation);
+  res.send({ data: automation, message: 'Automation status changed successfully' });
 };

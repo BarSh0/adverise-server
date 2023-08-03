@@ -8,7 +8,7 @@ export const withErrorHandler = (handler: AsyncRequestHandler) => {
     try {
       await handler(req, res, next);
     } catch (error: any) {
-      logger.error(error);
+      console.log(error);
       const status = error.status || 500;
       const message = error.message || 'Something went wrong';
       res.status(status).json({ message });

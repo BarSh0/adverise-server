@@ -130,5 +130,5 @@ export const toggleAutomationStatus = async (req: Request, res: Response, next: 
   const { campaignId, status } = req.body;
 
   const result = await facebookService.toggleCampaignStatus(accessToken, campaignId, automationId, status);
-  res.send(result);
+  res.send({ data: result, message: 'Automation status changed successfully' });
 };

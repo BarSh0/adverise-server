@@ -1,12 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
-import { Platform, Platforms, User } from '../database/models/user.model';
-import { AppError } from '../classes/AppError';
-import logger from '../utils/logger';
+import { NextFunction, Request, Response } from 'express';
+import { Platforms, User } from '../database/models/user.model';
 
 export const getMe = async (req: Request, res: Response, next: NextFunction) => {
   const userId = req.body.user._id;
   const user = await User.findById(userId, { password: 0 });
-  if (!user) throw new AppError(404, 'User not found');
+  if (!user) throw new Error('User not found');
   res.send(user);
 };
 
@@ -30,7 +28,7 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction) 
     },
     { new: true }
   );
-  if (!user) throw new AppError(404, 'User not found');
+  if (!user) throw new Error('User not found');
 
   res.send(user);
 };

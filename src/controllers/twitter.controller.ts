@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { AppError } from '../classes/AppError';
 import { Automation, AutomationStatusEnum } from '../database/models/automation.model';
 import { Page } from '../database/models/page.model';
 import { Post } from '../database/models/post.model';
@@ -13,7 +12,7 @@ import jwt from 'jsonwebtoken';
 
 export const getAdAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
-  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
+  if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const result = await TwitterService.getAllAdAccounts(accessToken, secretToken);
   // try {
   //   const accounts = await Promise.all(
@@ -33,7 +32,7 @@ export const getAdAccounts = async (req: Request, res: Response, next: NextFunct
 
 export const getAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
-  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
+  if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const { id } = req.params;
   const accounts = await TwitterService.getAllAccounts(id, accessToken, secretToken);
   const promiseArray = accounts.map(async (account: any) => {
@@ -52,15 +51,15 @@ export const getAccounts = async (req: Request, res: Response, next: NextFunctio
 export const getFundingInstruments = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
-  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
+  if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const fundingInstrumentId = await TwitterService.getFundingInstrumentsId(id, accessToken, secretToken);
-  if (!fundingInstrumentId) throw new AppError(400, 'You need to add a funding instrument to your account');
+  if (!fundingInstrumentId) throw new Error('You need to add a funding instrument to your account');
   res.send(fundingInstrumentId);
 };
 
 export const getCampaigns = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
-  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
+  if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const { id } = req.params;
   const result = await TwitterService.Campaign.getAllCampaigns(id, accessToken, secretToken);
   res.send(result);
@@ -68,7 +67,7 @@ export const getCampaigns = async (req: Request, res: Response, next: NextFuncti
 
 export const getAudiences = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
-  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
+  if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const { id } = req.params;
   const result = await TwitterService.Audience.getAllAudiences(id, accessToken, secretToken);
   res.send(result);
@@ -76,7 +75,7 @@ export const getAudiences = async (req: Request, res: Response, next: NextFuncti
 
 export const getAudienceById = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
-  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
+  if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const { id, audienceId } = req.params;
   const result = await TwitterService.Audience.getAudienceById(id, audienceId, accessToken, secretToken);
   res.send(result);
@@ -84,7 +83,8 @@ export const getAudienceById = async (req: Request, res: Response, next: NextFun
 
 export const getAllTargetingCriteria = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
-  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
+  if (!accessToken || !secretToken)
+    throw new Error('Seems like you are not connected to twitter,\n please connect on connections page.');
   const { id } = req.params;
   const lineItems = await TwitterService.LineItem.getAllLineItems(id, accessToken, secretToken);
   const lineItemsIds = lineItems.map((lineitem: any) => lineitem.id);
@@ -107,17 +107,17 @@ export const promoteTweet = async (req: Request, res: Response, next: NextFuncti
   const page = await Page.findOne({ pageId: user_id });
   if (!page) {
     // send mail to the buisness that the app tried to promote a tweet but the page is not connected
-    throw new AppError(404, 'Page not found');
+    throw new Error('Page not found');
   }
   const automation = await Automation.findOne({ page: page._id }).populate('user');
-  if (!automation) throw new AppError(404, 'Automation not found');
+  if (!automation) throw new Error('Automation not found');
   if (automation.status !== AutomationStatusEnum.ACTIVE) {
     // send mail that the app tried to promote a tweet but the automation is not active
-    throw new AppError(400, 'Automation is not active');
+    throw new Error('Automation is not active');
   }
   const user = automation.user as any;
   const { accessToken, secretToken } = user.platforms.twitter;
-  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
+  if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
 
   const adAccountId = automation.adAccountId;
   const promoteTweetReq: PromotedTweetParams = {
@@ -143,7 +143,7 @@ export const promoteTweet = async (req: Request, res: Response, next: NextFuncti
   if (!isAccepted) {
     // send mail that the app tried to promote a tweet but the tweet was not accepted
     console.log(result[0]);
-    throw new AppError(400, 'Tweet was not accepted');
+    throw new Error('Tweet was not accepted');
   }
 
   newPost.handled = true;
@@ -161,7 +161,7 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
   const adAccountId = req.params.id;
   const promotedUserId = req.body.page.user_id;
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
-  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
+  if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
 
   const newCampaingReq: newCampaignParams = {
     funding_instrument_id: fundingInstrument,
@@ -248,10 +248,10 @@ export const toggleStatus = async (req: Request, res: Response, next: NextFuncti
   const { id } = req.params;
   const { status } = req.body;
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
-  if (!accessToken || !secretToken) throw new AppError(400, 'You need to connect your twitter account');
+  if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const campaignStatus = status ? EntityStatus.ACTIVE : EntityStatus.PAUSED;
   const automation = await Automation.findById(id);
-  if (!automation) throw new AppError(404, 'Automation not found');
+  if (!automation) throw new Error('Automation not found');
   const lineItem = await TwitterService.LineItem.getLineItemById(
     automation.adAccountId,
     automation.campaign.id,
@@ -261,7 +261,7 @@ export const toggleStatus = async (req: Request, res: Response, next: NextFuncti
   if (!lineItem) {
     automation.status = AutomationStatusEnum.FAILED;
     await automation.save();
-    throw new AppError(404, 'LineItem not found');
+    throw new Error('LineItem not found');
   }
 
   const updateCampaignReq = {
@@ -279,7 +279,7 @@ export const toggleStatus = async (req: Request, res: Response, next: NextFuncti
   if (!updateCampaign) {
     automation.status = AutomationStatusEnum.FAILED;
     await automation.save();
-    throw new AppError(404, 'Campaign not found');
+    throw new Error('Campaign not found');
   }
 
   next();
