@@ -285,32 +285,34 @@ export const test = async (req: Request, res: Response, next: NextFunction) => {
 
 export const signInWithTwitter = async (req: Request, res: Response, next: NextFunction) => {
   const { email } = req.body;
-  const { oauthAccessToken, oauthTokenSecret } = req.body;
-  const user = await User.findOneAndUpdate(
-    { email },
-    {
-      $set: {
-        'platforms.twitter.accessToken': oauthAccessToken,
-        'platforms.twitter.secretToken': oauthTokenSecret,
-      },
-    },
-    { new: true }
-  );
+  const { accessToken: oauthAccessToken, secret: oauthTokenSecret } = req.body;
+  const { displayName, photoURL } = req.body;
+
+  const user = await User.findOne({ email });
+
   if (user) {
+    user.platforms.twitter.accessToken = oauthAccessToken;
+    user.platforms.twitter.secretToken = oauthTokenSecret;
+    user.platforms.twitter.isConnect = true;
+    user.picture ? null : (user.picture = photoURL);
+    await user.save();
+
     const jwtSecretKey = process.env.JWT_SECRET_KEY as string;
     const accessToken = jwt.sign({ id: user._id }, jwtSecretKey, { expiresIn: '30d' });
     res.send({ data: accessToken, message: `Welcome Back ${user.username}` });
     return;
   }
 
-  const { displayName, photoUrl } = req.body;
+  console.log(user);
+
   const newUser = new User({
     username: displayName,
     email,
     password: 'twitter',
-    picture: photoUrl,
+    picture: photoURL,
     platforms: {
       twitter: {
+        isConnect: true,
         accessToken: oauthAccessToken,
         secretToken: oauthTokenSecret,
       },
@@ -320,5 +322,6 @@ export const signInWithTwitter = async (req: Request, res: Response, next: NextF
   const jwtSecretKey = process.env.JWT_SECRET_KEY as string;
   const accessToken = jwt.sign({ id: newUser._id }, jwtSecretKey, { expiresIn: '30d' });
 
+  console.log(newUser);
   res.send({ data: accessToken, message: `Welcome ${newUser.username}` });
 };

@@ -3,13 +3,10 @@ import Joi from 'joi';
 import logger from '../../utils/logger';
 import bcrypt from 'bcrypt';
 
-export type Platforms = {
-  facebook?: Platform;
-  twitter?: Platform;
-  instagram?: Platform;
-  linkedin?: Platform;
-  tiktok?: Platform;
-};
+export type PlatformName = 'facebook' | 'twitter' | 'instagram' | 'linkedin' | 'tiktok';
+
+export type Platforms = Record<PlatformName, Platform>;
+
 export type Platform = {
   isConnect: boolean;
   accessToken: string;
@@ -56,7 +53,13 @@ const UserSchema = new mongoose.Schema(
     phone: { type: String },
     address: { type: String },
     city: { type: String },
-    platforms: { type: Object as Platforms, default: {} },
+    platforms: {
+      facebook: { type: Object, default: { isConnect: false, accessToken: '', secretToken: '' } },
+      twitter: { type: Object, default: { isConnect: false, accessToken: '', secretToken: '' } },
+      instagram: { type: Object, default: { isConnect: false, accessToken: '', secretToken: '' } },
+      linkedin: { type: Object, default: { isConnect: false, accessToken: '', secretToken: '' } },
+      tiktok: { type: Object, default: { isConnect: false, accessToken: '', secretToken: '' } },
+    },
   },
   { timestamps: true }
 );
