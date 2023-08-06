@@ -155,7 +155,7 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
   if (!page) throw new Error('page not found');
   const automation = await Automation.findOne({ page: page._id }).populate('user');
   if (!automation) throw new Error('automation not found');
-  if (automation.status === AutomationStatusEnum.ACTIVE) throw new Error('automation is not active');
+  if (automation.status !== AutomationStatusEnum.ACTIVE) throw new Error('automation is not active');
   const user = automation.user as IUser;
   const { accessToken } = user.platforms.facebook;
   if (!accessToken) throw new Error('access token not found');
