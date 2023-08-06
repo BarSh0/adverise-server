@@ -12,8 +12,8 @@ const router = Router();
 
 router.use('/automations', userAccessValidate, automationRoutes);
 router.use('/pages', pageRoutes);
-router.use('/facebook', userAccessValidate, facebookRoutes);
-router.use('/instagram', userAccessValidate, instagramRoutes);
+router.use('/facebook', facebookRoutes);
+router.use('/instagram', instagramRoutes);
 router.use('/twitter', twitterRoutes);
 router.use('/auth', authRoutes);
 router.use('/users', usersRoutes);

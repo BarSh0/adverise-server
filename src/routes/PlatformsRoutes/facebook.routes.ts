@@ -1,14 +1,15 @@
 import { Router } from 'express';
 import { Controllers } from '../../controllers';
 import { withErrorHandler } from '../../utils/errorsHandler';
+import userAccessValidate from '../../middleware/userAccessValidate';
 
 const router = Router();
 
-router.get('/adaccounts', withErrorHandler(Controllers.Facebook.getAdAccounts));
-router.get('/:id/accounts', withErrorHandler(Controllers.Facebook.getAccounts));
-router.get('/:id/campaigns', withErrorHandler(Controllers.Facebook.getCampaigns));
-router.post('/:id/campaigns', withErrorHandler(Controllers.Facebook.createAutomation));
-router.put('/:id/toggle', withErrorHandler(Controllers.Facebook.toggleAutomationStatus));
+router.get('/adaccounts', userAccessValidate, withErrorHandler(Controllers.Facebook.getAdAccounts));
+router.get('/:id/accounts', userAccessValidate, withErrorHandler(Controllers.Facebook.getAccounts));
+router.get('/:id/campaigns', userAccessValidate, withErrorHandler(Controllers.Facebook.getCampaigns));
+router.post('/:id/campaigns', userAccessValidate, withErrorHandler(Controllers.Facebook.createAutomation));
+router.put('/:id/toggle', userAccessValidate, withErrorHandler(Controllers.Facebook.toggleAutomationStatus));
 router.post('/webhook', withErrorHandler(Controllers.Facebook.promotePost));
 
 export default router;
