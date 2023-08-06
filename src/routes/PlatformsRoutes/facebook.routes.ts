@@ -10,6 +10,6 @@ router.get('/:id/accounts', userAccessValidate, withErrorHandler(Controllers.Fac
 router.get('/:id/campaigns', userAccessValidate, withErrorHandler(Controllers.Facebook.getCampaigns));
 router.post('/:id/campaigns', userAccessValidate, withErrorHandler(Controllers.Facebook.createAutomation));
 router.put('/:id/toggle', userAccessValidate, withErrorHandler(Controllers.Facebook.toggleAutomationStatus));
-router.post('/webhook', withErrorHandler(Controllers.Facebook.promotePost));
+router.post('/webhook/:hub.mode/:hub.challenge/:hub.verify_token', withErrorHandler(Controllers.Facebook.promotePost));
 
 export default router;
