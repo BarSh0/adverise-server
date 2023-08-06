@@ -6,6 +6,7 @@ import { Automation } from '../database/models/automation.model';
 import { facebookService } from '../services/facebook';
 import { IFBAdCreative, IFBCampaign } from '../types/facebookTypes';
 import * as adsSdk from 'facebook-nodejs-business-sdk';
+import { IUser } from '../database/models/user.model';
 
 export const getAdAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken } = req.body.user.platforms.instagram;
@@ -36,7 +37,6 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
     throw new Error('missing required value in zapier');
   }
 
-  const { accessToken } = req.body.user.platforms.instagram;
   const dbPost = await Post.findOne({ postId: post_id });
   if (dbPost && dbPost.handled) throw new Error('post already handled');
 
@@ -45,6 +45,8 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
   const automation = await Automation.findOne({ page: page._id }).populate('user');
   if (!automation) throw new Error('automation not found');
 
+  const user = automation.user as IUser;
+  const { accessToken } = user.platforms.instagram;
   const post: TPost = {
     postId: post_id,
     campaignId: automation.campaign.id,

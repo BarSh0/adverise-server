@@ -11,5 +11,8 @@ router.get('/:id/campaigns', userAccessValidate, withErrorHandler(Controllers.Fa
 router.post('/:id/campaigns', userAccessValidate, withErrorHandler(Controllers.Facebook.createAutomation));
 router.put('/:id/toggle', userAccessValidate, withErrorHandler(Controllers.Facebook.toggleAutomationStatus));
 router.post('/webhook', withErrorHandler(Controllers.Facebook.promotePost));
+router.get('/webhook', (req, res) => {
+  res.send(req.query['hub.challenge']);
+});
 
 export default router;
