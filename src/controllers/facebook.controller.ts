@@ -140,6 +140,7 @@ export const toggleAutomationStatus = async (req: Request, res: Response, next: 
 };
 
 export const promotePost = async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.body)
   const value = req.body.entry[0].changes[0].value;
 
   if (value.verb !== 'add') {

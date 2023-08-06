@@ -11,8 +11,4 @@ router.post('/:id/campaigns', withErrorHandler(Controllers.Facebook.createAutoma
 router.put('/:id/toggle', withErrorHandler(Controllers.Facebook.toggleAutomationStatus));
 router.post('/webhook', withErrorHandler(Controllers.Facebook.promotePost));
 
-const name = 'Facebook';
-const controller = Controllers[name];
-console.log(controller)
-
 export default router;
