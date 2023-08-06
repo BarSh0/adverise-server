@@ -1,6 +1,8 @@
 import logger from './logger';
 import * as adsSdk from 'facebook-nodejs-business-sdk';
 
+const isDevMode = process.env.NODE_ENV === 'development';
+
 const getLastPostId = async (accessToken: string, pageId: string) => {
   adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
   const page = new adsSdk.Page(pageId);
