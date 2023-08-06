@@ -140,7 +140,19 @@ export const toggleAutomationStatus = async (req: Request, res: Response, next: 
 };
 
 export const promotePost = async (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.body)
+  const hubMode = req.query['hub.mode'];
+  const hubChallenge = req.query['hub.challenge'];
+  const hubVerifyToken = req.query['hub.verify_token'];
+
+  if (hubMode && hubChallenge && hubVerifyToken) {
+    if (hubMode === 'subscribe' && hubVerifyToken === process.env.FACEBOOK_VERIFY_TOKEN) {
+      res.status(200).send(hubChallenge);
+      return;
+    }
+    res.status(403).send('Forbidden');
+    return;
+  }
+
   const value = req.body.entry[0].changes[0].value;
 
   if (value.verb !== 'add') {
