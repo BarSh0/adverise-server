@@ -14,7 +14,7 @@ const id = 'act_387500915456303';
 const api = adsSdk.FacebookAdsApi.init(access_token);
 const showDebugingInfo = true;
 if (showDebugingInfo) {
-  api.setDebug(true);
+  api.setDebug(isDevMode);
 }
 
 const logApiCallResult = (apiCallName: any, data: any) => {

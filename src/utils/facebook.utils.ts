@@ -2,7 +2,7 @@ import logger from './logger';
 import * as adsSdk from 'facebook-nodejs-business-sdk';
 
 const getLastPostId = async (accessToken: string, pageId: string) => {
-  adsSdk.FacebookAdsApi.init(accessToken).setDebug(true);
+  adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
   const page = new adsSdk.Page(pageId);
 
   const fields = ['message', 'created_time', 'id'];

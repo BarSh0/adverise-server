@@ -1,4 +1,4 @@
-import { testApi } from '../config/facebook-sdk.config';
+import { testApi } from '../../config/facebook-sdk.config';
 
 const toggleStatus = async (id: string) => {};
 

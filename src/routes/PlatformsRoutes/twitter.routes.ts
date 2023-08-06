@@ -6,7 +6,6 @@ import userAccessValidate from '../../middleware/userAccessValidate';
 const router = Router();
 
 router.get('/adaccounts', userAccessValidate, Controllers.Twitter.getAdAccounts);
-router.get('/test', userAccessValidate, Controllers.Twitter.test);
 router.get('/:id/accounts', userAccessValidate, withErrorHandler(Controllers.Twitter.getAccounts));
 router.get('/:id/funding-instruments', userAccessValidate, withErrorHandler(Controllers.Twitter.getFundingInstruments));
 router.get('/:id/campaigns', userAccessValidate, withErrorHandler(Controllers.Twitter.getCampaigns));

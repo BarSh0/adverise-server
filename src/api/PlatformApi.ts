@@ -1,4 +1,4 @@
-import { facebookService } from '../services/facebook.service';
+import { facebookService } from '../services/facebook/facebook.service';
 
 class PlatformApi {
   private name: string;

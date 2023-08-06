@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import { Automation, AutomationStatusEnum } from '../database/models/automation.model';
 import { Page } from '../database/models/page.model';
 import { Post } from '../database/models/post.model';
-import { TwitterService } from '../services/twitterServices';
-import { newCampaignParams } from '../services/twitterServices/campaigns.service';
+import { TwitterService } from '../services/twitter';
+import { newCampaignParams } from '../services/twitter/campaigns.service';
 import { EntityStatus, LineItemParams, Objective, Placements, ProductType } from '../types/twitterTypes/LineItem';
 import { PromotedTweetParams } from '../types/twitterTypes/PromotedTweet';
 import { OperatorType, TargetingCriteriaParams, TargetingType } from '../types/twitterTypes/TargetingCriteria';
@@ -89,7 +89,6 @@ export const getAllTargetingCriteria = async (req: Request, res: Response, next:
   const lineItems = await TwitterService.LineItem.getAllLineItems(id, accessToken, secretToken);
   const lineItemsIds = lineItems.map((lineitem: any) => lineitem.id);
   const result = await TwitterService.getAllTargetingCriteria(id, lineItemsIds, accessToken, secretToken);
-  // make the result unic by targeting_value
   const unicResult = result.reduce((acc: any, current: any) => {
     const x = acc.find((item: any) => item.targeting_value === current.targeting_value);
     if (!x) {
@@ -283,13 +282,6 @@ export const toggleStatus = async (req: Request, res: Response, next: NextFuncti
   }
 
   next();
-};
-
-export const test = async (req: Request, res: Response, next: NextFunction) => {
-  const { accessToken } = req.body;
-  const userId = '756201191646691328';
-  const result = await TwitterService.test(userId);
-  res.send(result);
 };
 
 export const signInWithTwitter = async (req: Request, res: Response, next: NextFunction) => {

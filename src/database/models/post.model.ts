@@ -16,7 +16,7 @@ interface IPost extends Document {
 
 export type TPost = {
   postId: string;
-  page: IPage;
+  page: mongoose.Types.ObjectId | IPage;
   campaignId: string;
   handled?: boolean;
   deleted?: boolean;

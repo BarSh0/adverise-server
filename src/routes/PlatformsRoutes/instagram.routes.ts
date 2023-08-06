@@ -7,7 +7,8 @@ const router = Router();
 router.get('/adaccounts', withErrorHandler(Controllers.Instagram.getAdAccounts));
 router.get('/:id/accounts', withErrorHandler(Controllers.Instagram.getAccounts));
 router.post('/campaigns', withErrorHandler(Controllers.Instagram.getCampaigns));
-router.post('/create', withErrorHandler(Controllers.Instagram.createAutomation));
-router.put('/toggle/:id', withErrorHandler(Controllers.Instagram.toggleAutomationStatus));
+router.post('/:id/campaigns', withErrorHandler(Controllers.Facebook.createAutomation));
+router.put('/:id/toggle', withErrorHandler(Controllers.Facebook.toggleAutomationStatus));
+router.post('/zapier', withErrorHandler(Controllers.Instagram.promotePost));
 
 export default router;

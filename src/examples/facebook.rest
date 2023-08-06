@@ -67,7 +67,7 @@ Content-Type: application/json
 ###
 
 POST http://localhost:8080/facebook/webhook
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY4NjY1NDMzMywiZXhwIjoxNjg5MjQ2MzMzfQ.-HuNhILmKN7F17DUe1wb3NVMjhm9HyJ-AOWyl04K9Wo
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Y2I4MmNlODk3OTg0ZTc3MGE5YWJiYSIsImlhdCI6MTY5MTE0NTc3MywiZXhwIjoxNjkzNzM3NzczfQ.w3BMeTSiAX1lIpUFvJWi0WjXwT4pYQ-0l0UDiqQk1Jk
 Content-Type: application/json
 
 {
@@ -79,7 +79,7 @@ Content-Type: application/json
                     "value": {
                         "created_time": 1684656306,
                         "from": {
-                            "id": "110435530628957",
+                            "id": "2457972897588294",
                             "name": "תמר קוסמטיקס - המרכז הארצי לייבוא ושיווק מוצרים אונליין לקוסמטיקאיות"
                         },
                         "item": "photo",

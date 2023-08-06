@@ -5,7 +5,6 @@ const mongoConnect = () => {
   const prodURL = process.env.PROD_MONGO_URL as string;
   const mode = process.env.NODE_ENV as string;
   const URL = mode === 'development' ? devURL : prodURL;
-  console.log(process.env.NODE_ENV);
 
   return new Promise<void>((resolve, reject) => {
     mongoose.connect(URL, {

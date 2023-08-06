@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { IPage, Page } from '../database/models/page.model';
+import { IPage, Page } from '../../database/models/page.model';
 
 const createPage = async (page: IPage, userId: string) => {
   const isExist = await Page.findOne({ pageId: page.pageId, user: userId });

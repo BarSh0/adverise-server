@@ -1,4 +1,5 @@
 import mongoose, { Document, Model } from 'mongoose';
+import { IUser } from './user.model';
 
 export type AutomationStatus = 'PENDING' | 'ACTIVE' | 'PAUSED' | 'FAILED' | 'ARCHIVED';
 export enum AutomationStatusEnum {
@@ -25,7 +26,7 @@ interface IAutomation extends Document {
   objective: string;
   postTypes: string[];
   page: mongoose.Types.ObjectId;
-  user: mongoose.Types.ObjectId;
+  user: mongoose.Types.ObjectId | IUser;
   posts: mongoose.Types.ObjectId[];
   status: AutomationStatus;
   lastOperation: Date;
