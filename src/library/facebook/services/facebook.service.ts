@@ -1,10 +1,10 @@
 import * as adsSdk from 'facebook-nodejs-business-sdk';
 import { facebookService } from '.';
-import { FBAdValidate, IFBAd } from '../../types/facebookTypes/FBAd';
-import { FBAdCreativeValidate, IFBAdCreative } from '../../types/facebookTypes/FBAdCreative';
-import { FBRuleValidate, IFBRule } from '../../types/facebookTypes/FBRule';
-import { helpersUtils } from '../../utils/helpers.utils';
-import logger from '../../utils/logger';
+import { FBAdValidate, IFBAd } from '../../../types/facebookTypes/FBAd';
+import { FBAdCreativeValidate, IFBAdCreative } from '../../../types/facebookTypes/FBAdCreative';
+import { FBRuleValidate, IFBRule } from '../../../types/facebookTypes/FBRule';
+import { helpersUtils } from '../../../utils/helpers.utils';
+import logger from '../../../utils/logger';
 
 const isDevMode = process.env.NODE_ENV === 'development';
 
@@ -81,14 +81,13 @@ export const createAd = async (accessToken: string, ad: IFBAd) => {
     logger.error(`Error in creating ad for ad set ${ad.adSetId} of the account: ${ad.accountId}`);
     throw err;
   });
-  logger.info(`Creating ad for ad set ${ad.adSetId} of the account: ${ad.accountId}`);
+  logger.info(`Creating ad for ad set ${ad.adSetId} of the account: ${ad.accountId} is done!`);
 
   return createdAd;
 };
 
 export const createRule = async (accessToken: string, rule: IFBRule) => {
   FBRuleValidate(rule);
-  logger.info(`Creating rule for campaign ${rule.campaignId} of the account: ${rule.accountId}`);
   adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
   const account = new adsSdk.AdAccount(rule.accountId);
 
@@ -114,7 +113,7 @@ export const createRule = async (accessToken: string, rule: IFBRule) => {
     logger.error(`Error in creating rule for campaign ${rule.campaignId} of the account: ${rule.accountId}`);
     throw err;
   });
-  logger.info(`Creating rule for campaign ${rule.campaignId} of the account: ${rule.accountId}`);
+  logger.info(`Creating rule for campaign ${rule.campaignId} of the account: ${rule.accountId} is done!`);
 
   return createdRule;
 };
@@ -147,7 +146,7 @@ export const updateRule = async (accessToken: string, accountId: string, campaig
     logger.error(`Error in updating rule for campaign ${campaignId} of the account: ${accountId}`);
     throw err;
   });
-  logger.info(`Updating rule for campaign ${campaignId} of the account: ${accountId}`);
+  logger.info(`Updating rule for campaign ${campaignId} of the account: ${accountId} is done!`);
 
   return createdRule;
 };

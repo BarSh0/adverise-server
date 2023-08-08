@@ -3,7 +3,7 @@ import IGService from '../services/instagram';
 import { Post, TPost } from '../database/models/post.model';
 import { Page } from '../database/models/page.model';
 import { Automation } from '../database/models/automation.model';
-import { facebookService } from '../services/facebook';
+import { facebookService } from '../library/facebook/services';
 import { IFBAdCreative, IFBCampaign } from '../types/facebookTypes';
 import * as adsSdk from 'facebook-nodejs-business-sdk';
 import { IUser } from '../database/models/user.model';

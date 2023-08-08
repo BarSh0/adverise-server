@@ -1,12 +1,12 @@
-import { Automation } from '../../database/models/automation.model';
-import { IFBCampaign } from '../../types/facebookTypes';
-import { FBCampaignValidate } from '../../types/facebookTypes/FBCampaign';
+import { Automation } from '../../../database/models/automation.model';
+import { IFBCampaign } from '../../../types/facebookTypes';
+import { FBCampaignValidate } from '../../../types/facebookTypes/FBCampaign';
 import * as adsSdk from 'facebook-nodejs-business-sdk';
-import { helpersUtils } from '../../utils/helpers.utils';
+import { helpersUtils } from '../../../utils/helpers.utils';
 
 const isDevMode = process.env.NODE_ENV === 'development';
 
-enum CampaignStatus {
+export enum CampaignStatus {
   ACTIVE = 'ACTIVE',
   PAUSED = 'PAUSED',
 }
@@ -33,7 +33,7 @@ export const createCampaign = async (accessToken: string, campaign: IFBCampaign)
     console.error(`Error in creating campaign for page ${campaign.pageName} of the account: ${campaign.accountId}`);
     throw err;
   });
-  console.info(`Creating campaign for page ${campaign.pageName} of the account: ${campaign.accountId}`);
+  console.info(`Creation of campaign for page ${campaign.pageName} of the account: ${campaign.accountId} is done!`);
 
   return createdCampaign;
 };
@@ -68,7 +68,7 @@ export const duplicateCampaign = async (accessToken: string, campaign: IFBCampai
     console.error(`Error in duplicating campaign ${campaign.campaignId}`);
     throw err;
   });
-  console.info(`Duplicating campaign ${campaign.campaignId}`);
+  console.info(`Duplicating campaign ${campaign.campaignId} is done!`);
 
   return newCampaign;
 };

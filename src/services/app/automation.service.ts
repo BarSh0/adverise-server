@@ -1,7 +1,7 @@
 import { Automation, IAutomation } from '../../database/models/automation.model';
 
-export const get = async (id: string): Promise<IAutomation> => {
-  const automation = await Automation.findById(id);
+export const get = async (id: string, populate: string[] = []): Promise<IAutomation> => {
+  const automation = await Automation.findById(id).populate(populate);
   if (!automation) throw new Error('automation not found');
   return automation;
 };
@@ -16,4 +16,10 @@ export const update = async (id: string, details: IAutomation): Promise<IAutomat
   if (!automation) throw new Error('automation not found');
   automation.set(details);
   return await automation.save();
+};
+
+export const remove = async (id: string): Promise<IAutomation> => {
+  const automation = await Automation.findByIdAndDelete(id);
+  if (!automation) throw new Error('automation not found');
+  return automation;
 };

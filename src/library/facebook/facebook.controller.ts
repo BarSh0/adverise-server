@@ -5,11 +5,13 @@ import { IPage, Page } from '../../database/models/page.model';
 import { IFBAd, IFBAdCreative, IFBAdSet, IFBCampaign, IFBRule } from '../../types/facebookTypes';
 import { helpersUtils } from '../../utils/helpers.utils';
 import logger from '../../utils/logger';
-import { facebookService } from '../../services/facebook';
+import { facebookService } from './services';
 import { IUser, User } from '../../database/models/user.model';
 import { Post, TPost } from '../../database/models/post.model';
 import * as adsSdk from 'facebook-nodejs-business-sdk';
 import jwt from 'jsonwebtoken';
+import AppService from '../../services/app';
+import { CampaignStatus } from './services/campaign.service';
 
 export const getAdAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken } = req.body.user.platforms.facebook;
@@ -43,10 +45,6 @@ export const createAutomation = async (req: Request, res: Response, next: NextFu
   if (!accessToken) throw new Error('Access token is missing');
 
   const adPauseTime = helpersUtils.amountOfHoursCalc(amount, of);
-
-  logger.info(
-    `The user ${user.name} is trying to create new automation for page ${page.name} that belongs to account ${adAccount.id}`
-  );
 
   const newPage = new Page({
     ...page,
@@ -296,4 +294,17 @@ export const signInWithFacebook = async (req: Request, res: Response, next: Next
   const accessToken = jwt.sign({ id: newUser._id }, jwtSecretKey, { expiresIn: '30d' });
 
   res.send({ data: accessToken, message: `Welcome ${newUser.username}` });
+};
+
+export const deleteAutomation = async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  const { accessToken } = req.body.user.platforms.facebook;
+  if (!accessToken) throw new Error('Access token is missing');
+
+  const automation = await AppService.Automation.get(id);
+  const { campaign } = automation;
+  const status = CampaignStatus.PAUSED;
+  await facebookService.Campaign.toggleCampaignStatus(accessToken, campaign.id, id, status);
+  await AppService.Automation.remove(id);
+  res.send({ message: 'Automation deleted successfully' });
 };

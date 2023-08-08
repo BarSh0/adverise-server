@@ -1,5 +1,5 @@
 import * as adsSdk from 'facebook-nodejs-business-sdk';
-import { FBAdSetValidate, IFBAdSet } from '../../types/facebookTypes/FBAdSet';
+import { FBAdSetValidate, IFBAdSet } from '../../../types/facebookTypes/FBAdSet';
 
 const isDevMode = process.env.NODE_ENV === 'development';
 
@@ -42,7 +42,7 @@ export const create = async (accessToken: string, adSet: IFBAdSet) => {
     console.error(`Error in creating ad set for audience ${adSet.audience.name} of the account: ${adSet.accountId}`);
     throw err;
   });
-  console.info(`Creating ad set for audience ${adSet.audience.name} of the account: ${adSet.accountId}`);
+  console.info(`Creation of Ad set for audience ${adSet.audience.name} of the account: ${adSet.accountId} is done!`);
 
   return createdAdSet;
 };
@@ -61,7 +61,7 @@ export const duplicate = async (accessToken: string, adSetId: string, adSet: IFB
     console.error(`Error in duplicating ad set ${adSetId}`);
     throw err;
   });
-  console.info(`Duplicating ad set ${adSetId}`);
+  console.info(`Duplicating of ad set ${adSetId} is done!`);
 
   return newAdSet;
 };

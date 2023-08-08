@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as adsSdk from 'facebook-nodejs-business-sdk';
-import logger from '../../utils/logger';
+import logger from '../../../utils/logger';
 
 const isDevMode = process.env.NODE_ENV === 'development';
 
@@ -25,6 +25,6 @@ export const subscribePageToWebhook = async (pageId: string, pageAccessToken: st
 
   const response = result.data;
 
-  logger.info(`Subscribing page ${pageId} to webhook`);
+  logger.info(`Subscribing page ${pageId} to webhook is done!`);
   return response;
 };
