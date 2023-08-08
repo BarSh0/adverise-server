@@ -33,6 +33,8 @@
     "oauth-signature": "^1.5.0",
     "passport": "^0.6.0",
     "passport-twitter": "^1.0.4",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
     "ts-node": "^10.9.1",
     "twit": "^2.2.11",
     "twitter-ads": "^0.2.1",
@@ -51,6 +53,8 @@
     "@types/node": "^18.15.11",
     "@types/oauth": "^0.9.1",
     "@types/oauth-signature": "^1.5.0",
+    "@types/swagger-jsdoc": "^6.0.1",
+    "@types/swagger-ui-express": "^4.1.3",
     "@types/twit": "^2.2.31"
   }
 }

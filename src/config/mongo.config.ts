@@ -1,4 +1,5 @@
 import mongoose, { ConnectOptions } from 'mongoose';
+import logger from '../utils/logger';
 
 const mongoConnect = () => {
   const devURL = process.env.LOCAL_MONGO_URL as string;
@@ -16,12 +17,12 @@ const mongoConnect = () => {
     const db = mongoose.connection;
 
     db.on('error', (err) => {
-      console.error('Connection error:', err);
+      logger.error('Connection error:', err);
       reject(err);
     });
 
     db.once('open', () => {
-      console.log(`Connected to MongoDB with ${mode} mode !`);
+      logger.info(`Connected to MongoDB with ${mode} mode !`);
       resolve();
     });
   });

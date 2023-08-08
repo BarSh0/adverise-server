@@ -1,18 +1,17 @@
 import { Router } from 'express';
-import { withErrorHandler } from '../utils/errorsHandler';
+import { tryCatch } from '../utils/errorsHandler';
 import { Controllers } from '../controllers';
 
 const router = Router();
 
-router.get('/', withErrorHandler(Controllers.Automation.getAllAutomations));
-router.get('/:id', withErrorHandler(Controllers.Automation.getAutomation));
-router.get('/page/:id', withErrorHandler(Controllers.Automation.getAutomationsByPage));
-router.post('/', withErrorHandler(Controllers.Automation.postAutomation));
-router.delete('/:id', withErrorHandler(Controllers.Automation.deleteAutomation));
+router.get('/', tryCatch(Controllers.Automation.getAllAutomations));
+router.get('/:id', tryCatch(Controllers.Automation.getAutomation));
+router.post('/', tryCatch(Controllers.Automation.postAutomation));
+router.delete('/:id', tryCatch(Controllers.Automation.deleteAutomation));
 router.delete(
   '/twitter/:id',
-  withErrorHandler(Controllers.Twitter.toggleStatus),
-  withErrorHandler(Controllers.Automation.deleteAutomation)
+  tryCatch(Controllers.Twitter.toggleStatus),
+  tryCatch(Controllers.Automation.deleteAutomation)
 );
 
 const automationRoutes = router;

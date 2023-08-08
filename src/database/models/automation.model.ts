@@ -10,12 +10,6 @@ export enum AutomationStatusEnum {
   ARCHIVED = 'ARCHIVED',
 }
 export type AmountType = 'hours' | 'days' | 'weeks' | 'months';
-type AutomationProperties = {
-  currency: string;
-  amount: number;
-  budget: number;
-  of: AmountType;
-};
 
 interface IAutomation extends Document {
   adAccountId: string;

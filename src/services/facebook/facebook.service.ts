@@ -18,10 +18,7 @@ export const getAdAccounts = async (accessToken: string) => {
     logger.error(`Error in getting ad accounts`);
     throw err;
   });
-  logger.info(`Getting ad accounts`);
-
   const result = adAccounts.map((account: any) => account._data);
-
   return result;
 };
 

@@ -3,7 +3,7 @@ import { User } from '../database/models/user.model';
 import logger from '../utils/logger';
 import jwt from 'jsonwebtoken';
 
-const userAccessValidate = async (req: Request, res: Response, next: NextFunction) => {
+const authValidation = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userAccess = req.header('Authorization');
     if (!userAccess) throw new Error('Access denied!');
@@ -18,4 +18,4 @@ const userAccessValidate = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-export default userAccessValidate;
+export default authValidation;

@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { Controllers } from '../controllers';
-import userAccessValidate from '../middleware/userAccessValidate';
-import { withErrorHandler } from '../utils/errorsHandler';
+import authValidation from '../middleware/authValidation';
+import { tryCatch } from '../utils/errorsHandler';
 
 const router = Router();
 
-router.get('/me', userAccessValidate, withErrorHandler(Controllers.User.getMe));
-router.put('/me', userAccessValidate, withErrorHandler(Controllers.User.updateMe));
+router.get('/me', authValidation, tryCatch(Controllers.User.getMe));
+router.put('/me', authValidation, tryCatch(Controllers.User.updateMe));
 
 const usersRoutes = router;
 

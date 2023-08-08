@@ -3,7 +3,7 @@ import logger from '../utils/logger';
 
 type AsyncRequestHandler = (req: Request, res: Response, next: NextFunction) => Promise<void>;
 
-export const withErrorHandler = (handler: AsyncRequestHandler) => {
+export const tryCatch = (handler: AsyncRequestHandler) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       await handler(req, res, next);

@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
-import { Automation, AutomationStatusEnum } from '../database/models/automation.model';
-import { IPage, Page } from '../database/models/page.model';
-import { IFBAd, IFBAdCreative, IFBAdSet, IFBCampaign, IFBRule } from '../types/facebookTypes';
-import { helpersUtils } from '../utils/helpers.utils';
-import logger from '../utils/logger';
-import { facebookService } from '../services/facebook';
-import { IUser, User } from '../database/models/user.model';
-import { Post, TPost } from '../database/models/post.model';
+import { Automation, AutomationStatusEnum } from '../../database/models/automation.model';
+import { IPage, Page } from '../../database/models/page.model';
+import { IFBAd, IFBAdCreative, IFBAdSet, IFBCampaign, IFBRule } from '../../types/facebookTypes';
+import { helpersUtils } from '../../utils/helpers.utils';
+import logger from '../../utils/logger';
+import { facebookService } from '../../services/facebook';
+import { IUser, User } from '../../database/models/user.model';
+import { Post, TPost } from '../../database/models/post.model';
 import * as adsSdk from 'facebook-nodejs-business-sdk';
 import jwt from 'jsonwebtoken';
 
@@ -15,7 +15,7 @@ export const getAdAccounts = async (req: Request, res: Response, next: NextFunct
   const { accessToken } = req.body.user.platforms.facebook;
   if (!accessToken) throw new Error('Access token is missing');
   const result = await facebookService.Others.getAdAccounts(accessToken);
-  res.send(result);
+  res.send({ data: result, message: 'Ad accounts fetched successfully' });
 };
 
 export const getAccounts = async (req: Request, res: Response, next: NextFunction) => {
@@ -23,7 +23,7 @@ export const getAccounts = async (req: Request, res: Response, next: NextFunctio
   const { accessToken } = req.body.user.platforms.facebook;
   if (!accessToken) throw new Error('Access token is missing');
   const result = await facebookService.Page.getPages(accessToken, id);
-  res.send(result);
+  res.send({ data: result, message: 'Accounts fetched successfully' });
 };
 
 export const getCampaigns = async (req: Request, res: Response, next: NextFunction) => {
@@ -31,7 +31,7 @@ export const getCampaigns = async (req: Request, res: Response, next: NextFuncti
   const { accessToken } = req.body.user.platforms.facebook;
   if (!accessToken) throw new Error('Access token is missing');
   const result = await facebookService.Campaign.createCampaign(accessToken, campaign);
-  res.send(result);
+  res.send({ data: result, message: 'Campaigns fetched successfully' });
 };
 
 export const createAutomation = async (req: Request, res: Response, next: NextFunction) => {
@@ -126,22 +126,30 @@ export const createAutomation = async (req: Request, res: Response, next: NextFu
 };
 
 export const toggleAutomationStatus = async (req: Request, res: Response, next: NextFunction) => {
-  const automationId = req.params.id;
-  const { status } = req.body;
-  const { accessToken } = req.body.user.platforms.facebook;
-  if (!accessToken) throw new Error('Access token is missing');
+  try {
+    const automationId = req.params.id;
+    const { status } = req.body;
+    const { accessToken } = req.body.user.platforms.facebook;
+    if (!accessToken) throw new Error('Access token is missing');
 
-  const automation = await Automation.findById(automationId);
-  if (!automation) throw new Error('automation not found');
-  const campaignId = automation.campaign.id;
+    const automation = await Automation.findById(automationId);
+    if (!automation) throw new Error('automation not found');
+    const campaignId = automation.campaign.id;
 
-  const result = await facebookService.Campaign.toggleCampaignStatus(accessToken, campaignId, automationId, status);
-  res.send({ data: result, message: 'Automation status changed successfully' });
+    const result = await facebookService.Campaign.toggleCampaignStatus(accessToken, campaignId, automationId, status);
+    res.send({ data: result, message: 'Automation status changed successfully' });
+  } catch (error: any) {
+    const automationId = req.params.id;
+    const automation = await Automation.findById(automationId);
+    if (!automation) throw new Error('automation not found');
+    automation.status = AutomationStatusEnum.FAILED;
+    await automation.save();
+    console.log(error);
+    res.status(400).send({ message: error.message });
+  }
 };
 
 export const promotePost = async (req: Request, res: Response, next: NextFunction) => {
-
-
   const value = req.body.entry[0].changes[0].value;
 
   if (value.verb !== 'add') {
@@ -152,7 +160,10 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
   console.log(`Get request to promote post ${value.post_id} from page ${value.from.name}`);
 
   const page = await Page.findOne({ pageId: value.from.id });
-  if (!page) throw new Error('page not found');
+  if (!page) {
+    res.send();
+    return;
+  }
   const automation = await Automation.findOne({ page: page._id }).populate('user');
   if (!automation) throw new Error('automation not found');
   if (automation.status !== AutomationStatusEnum.ACTIVE) throw new Error('automation is not active');
@@ -232,6 +243,8 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
 
   const adCreative = await facebookService.Others.createAdCreative(accessToken, adCreativeReq);
 
+  console.log(`Updating ad sets with creative ${adCreative.id}`);
+
   const adSetsPromises = adSets.map(async (adSet: any) => {
     const temp = new adsSdk.AdSet(adSet.id);
     return temp.update([], { creative: { creative_id: adCreative.id } });
@@ -242,19 +255,20 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
   newPost.handled = true;
   await newPost.save();
 
+  console.log(`Post ${newPost.postId} promoted successfully`);
+
   res.send({ data: newPost, message: 'Post promoted successfully' });
 };
 
 export const signInWithFacebook = async (req: Request, res: Response, next: NextFunction) => {
   const { email } = req.body;
-  const { accessToken: oauthAccessToken, secret: oauthTokenSecret } = req.body;
+  const { accessToken: fbAccessToken } = req.body;
   const { displayName, photoURL } = req.body;
 
   const user = await User.findOne({ email });
 
   if (user) {
-    user.platforms.facebook.accessToken = oauthAccessToken;
-    user.platforms.facebook.secretToken = oauthTokenSecret;
+    user.platforms.facebook.accessToken = fbAccessToken;
     user.platforms.facebook.isConnect = true;
     user.picture ? null : (user.picture = photoURL);
     await user.save();
@@ -265,8 +279,6 @@ export const signInWithFacebook = async (req: Request, res: Response, next: Next
     return;
   }
 
-  console.log(user);
-
   const newUser = new User({
     username: displayName,
     email,
@@ -275,8 +287,7 @@ export const signInWithFacebook = async (req: Request, res: Response, next: Next
     platforms: {
       facebook: {
         isConnect: true,
-        accessToken: oauthAccessToken,
-        secretToken: oauthTokenSecret,
+        accessToken: fbAccessToken,
       },
     },
   });
@@ -284,6 +295,5 @@ export const signInWithFacebook = async (req: Request, res: Response, next: Next
   const jwtSecretKey = process.env.JWT_SECRET_KEY as string;
   const accessToken = jwt.sign({ id: newUser._id }, jwtSecretKey, { expiresIn: '30d' });
 
-  console.log(newUser);
   res.send({ data: accessToken, message: `Welcome ${newUser.username}` });
 };

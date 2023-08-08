@@ -1,5 +1,6 @@
 import axios from 'axios';
 import * as adsSdk from 'facebook-nodejs-business-sdk';
+import logger from '../../utils/logger';
 
 const isDevMode = process.env.NODE_ENV === 'development';
 
@@ -9,10 +10,9 @@ export const getPages = async (accessToken: string, adAccountId: string) => {
   const fields = ['id', 'name', 'picture'];
   const params = {};
   const pages = await adAccount.getPromotePages(fields, params).catch((err) => {
-    console.error(`Error in getting pages for ad account ${adAccountId}`);
+    logger.error(`Error in getting pages for ad account ${adAccountId}`);
     throw err;
   });
-  console.info(`Getting pages for ad account ${adAccountId}`);
   const pagesData = pages.map((page: any) => {
     return { pageId: page._data.id, name: page._data.name, picture: page._data.picture.data.url };
   });
@@ -25,6 +25,6 @@ export const subscribePageToWebhook = async (pageId: string, pageAccessToken: st
 
   const response = result.data;
 
-  console.log(`Subscribing page ${pageId} to webhook`);
+  logger.info(`Subscribing page ${pageId} to webhook`);
   return response;
 };
