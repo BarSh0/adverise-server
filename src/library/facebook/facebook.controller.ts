@@ -29,10 +29,10 @@ export const getAccounts = async (req: Request, res: Response, next: NextFunctio
 };
 
 export const getCampaigns = async (req: Request, res: Response, next: NextFunction) => {
-  const { campaign } = req.body;
+  const { id } = req.params;
   const { accessToken } = req.body.user.platforms.facebook;
   if (!accessToken) throw new Error('Access token is missing');
-  const result = await facebookService.Campaign.createCampaign(accessToken, campaign);
+  const result = await facebookService.Campaign.getAll(accessToken, id);
   res.send({ data: result, message: 'Campaigns fetched successfully' });
 };
 
@@ -121,6 +121,45 @@ export const createAutomation = async (req: Request, res: Response, next: NextFu
   const newAutomation = await Automation.create(automation);
 
   res.status(200).send(newAutomation);
+};
+
+export const simpleCreation = async (req: Request, res: Response, next: NextFunction) => {
+  logger.info('Getting request to create a new automation with the parameters - ' + JSON.stringify(req.body));
+  const page: IPage = req.body.page;
+  const { campaign } = req.body;
+  const { user } = req.body;
+  const { id } = req.params;
+  const { accessToken } = user.platforms.facebook;
+  if (!accessToken) throw new Error('Access token is missing');
+
+  const newPage = new Page({
+    ...page,
+    platform: 'facebook',
+    user: new mongoose.Types.ObjectId(user._id),
+  });
+
+  await newPage.save();
+
+  const thisCampaign = await facebookService.Campaign.get(accessToken, campaign.id);
+
+  const automation = {
+    adAccountId: id,
+    platform: 'facebook',
+    campaign: { id: campaign.id, name: campaign.name },
+    page: new mongoose.Types.ObjectId(newPage._id),
+    audiences: thisCampaign.adsets,
+    dailyBudget: thisCampaign.daily_budget,
+    objective: thisCampaign.objective,
+    user: new mongoose.Types.ObjectId(user._id),
+    lastOperation: new Date(),
+    postTypes: ['photo', 'video', 'link'],
+  };
+
+  const pageAccessToken = await facebookService.Tokens.fetchLongLivedAccessTokenForPage(page.pageId, accessToken);
+  await facebookService.Page.subscribePageToWebhook(page.pageId, pageAccessToken);
+  const newAutomation = await Automation.create(automation);
+
+  res.status(200).send({ data: newAutomation, message: 'Automation created successfully' });
 };
 
 export const toggleAutomationStatus = async (req: Request, res: Response, next: NextFunction) => {
@@ -290,6 +329,7 @@ export const signInWithFacebook = async (req: Request, res: Response, next: Next
     },
   });
   await newUser.save();
+
   const jwtSecretKey = process.env.JWT_SECRET_KEY as string;
   const accessToken = jwt.sign({ id: newUser._id }, jwtSecretKey, { expiresIn: '30d' });
 
@@ -305,6 +345,7 @@ export const deleteAutomation = async (req: Request, res: Response, next: NextFu
   const { campaign } = automation;
   const status = CampaignStatus.PAUSED;
   await facebookService.Campaign.toggleCampaignStatus(accessToken, campaign.id, id, status);
+  await AppService.Page.remove(automation.page._id);
   await AppService.Automation.remove(id);
   res.send({ message: 'Automation deleted successfully' });
 };

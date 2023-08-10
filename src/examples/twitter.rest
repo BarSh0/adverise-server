@@ -7,7 +7,7 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Yzc2NDJiYjE5OTQx
 Content-Type: application/json
 ###
 GET http://localhost:8080/twitter/18ce55bc6x0/campaigns
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY5MDI3ODQ1MiwiZXhwIjoxNjkyODcwNDUyfQ.65zIDGlJqRMAshQKlDNF8BS4Q7cehOvLQ9uadwUrOtc
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZDRiNWJhMDM3NDFhZmU4MTRiNDY2YSIsImlhdCI6MTY5MTY2MTc1NCwiZXhwIjoxNjk0MjUzNzU0fQ.70Z1ro3wI8fIv4CCKbQLbbFOTr5a-xg2U1MxIrQ4rBE
 Content-Type: application/json
 ###
 GET http://localhost:8080/twitter/18ce55bc6x0/audiences

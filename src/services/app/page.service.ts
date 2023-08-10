@@ -1,17 +1,30 @@
-import mongoose from 'mongoose';
 import { IPage, Page } from '../../database/models/page.model';
 
-const createPage = async (page: IPage, userId: string) => {
-  const isExist = await Page.findOne({ pageId: page.pageId, user: userId });
-  if (isExist) {
-    return isExist;
-  }
-  page.user = new mongoose.Types.ObjectId(userId);
-  const newPage = new Page(page);
-  await newPage.save();
-  return newPage;
+enum PopulateOptions {
+  AUTOMATION = 'automation',
+  USER = 'user',
+}
+
+export const get = async (id: any, populate: PopulateOptions[] = []): Promise<IPage> => {
+  const page = await Page.findById(id).populate(populate);
+  if (!page) throw new Error('page not found');
+  return page;
 };
 
-export const pageService = {
-  createPage,
+export const create = async (details: IPage): Promise<IPage> => {
+  const page = new Page(details);
+  return await page.save();
+};
+
+export const update = async (id: any, details: IPage): Promise<IPage> => {
+  const page = await Page.findById(id);
+  if (!page) throw new Error('page not found');
+  page.set(details);
+  return await page.save();
+};
+
+export const remove = async (id: any): Promise<IPage> => {
+  const page = await Page.findByIdAndDelete(id);
+  if (!page) throw new Error('page not found');
+  return page;
 };

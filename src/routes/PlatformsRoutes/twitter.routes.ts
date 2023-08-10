@@ -18,6 +18,7 @@ router.post(
   tryCatch(Controllers.Twitter.createNewCampaign),
   tryCatch(Controllers.Automation.postAutomation)
 );
+router.post('/:id/simple', authValidation, tryCatch(Controllers.Twitter.simpleCreation));
 router.post('/zapier', tryCatch(Controllers.Twitter.promoteTweet));
 router.put(
   '/:id/toggle',
@@ -26,5 +27,6 @@ router.put(
   tryCatch(Controllers.Automation.toggleStatus)
 );
 router.post('/signin', tryCatch(Controllers.Twitter.signInWithTwitter));
+router.delete('/:id', tryCatch(Controllers.Twitter.toggleStatus), tryCatch(Controllers.Automation.deleteAutomation));
 
 export default router;

@@ -88,6 +88,7 @@ export const getAllTargetingCriteria = async (
   const url = `accounts/${accountId}/targeting_criteria`;
   const params = {
     line_item_ids: lineItemsIds,
+    count: 1000,
   };
   return new Promise((resolve, reject) => {
     T.get(url, params, function (error: any, resp: any, body: any) {

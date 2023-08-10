@@ -27,7 +27,7 @@ export const getAdAccounts = async (req: Request, res: Response, next: NextFunct
   //   console.error('Error:', err);
   //   reject(err);
   // }
-  res.send(result);
+  res.send({ data: result, message: `Success Get Ad Account For ${req.body.user.username}` });
 };
 
 export const getAccounts = async (req: Request, res: Response, next: NextFunction) => {
@@ -45,7 +45,7 @@ export const getAccounts = async (req: Request, res: Response, next: NextFunctio
     return accountWithDetails;
   });
   const result = await Promise.all(promiseArray);
-  res.send(result);
+  res.send({ data: result, message: `Success Get Accounts For ${req.body.user.username}` });
 };
 
 export const getFundingInstruments = async (req: Request, res: Response, next: NextFunction) => {
@@ -54,7 +54,7 @@ export const getFundingInstruments = async (req: Request, res: Response, next: N
   if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const fundingInstrumentId = await TwitterService.getFundingInstrumentsId(id, accessToken, secretToken);
   if (!fundingInstrumentId) throw new Error('You need to add a funding instrument to your account');
-  res.send(fundingInstrumentId);
+  res.send({ data: fundingInstrumentId, message: `Success Get Funding Instruments For ${req.body.user.username}` });
 };
 
 export const getCampaigns = async (req: Request, res: Response, next: NextFunction) => {
@@ -62,7 +62,7 @@ export const getCampaigns = async (req: Request, res: Response, next: NextFuncti
   if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const { id } = req.params;
   const result = await TwitterService.Campaign.getAllCampaigns(id, accessToken, secretToken);
-  res.send(result);
+  res.send({ data: result, message: `Success Get Campaigns For ${req.body.user.username}` });
 };
 
 export const getAudiences = async (req: Request, res: Response, next: NextFunction) => {
@@ -70,7 +70,7 @@ export const getAudiences = async (req: Request, res: Response, next: NextFuncti
   if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const { id } = req.params;
   const result = await TwitterService.Audience.getAllAudiences(id, accessToken, secretToken);
-  res.send(result);
+  res.send({ data: result, message: `Success Get Audiences For ${req.body.user.username}` });
 };
 
 export const getAudienceById = async (req: Request, res: Response, next: NextFunction) => {
@@ -78,7 +78,7 @@ export const getAudienceById = async (req: Request, res: Response, next: NextFun
   if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const { id, audienceId } = req.params;
   const result = await TwitterService.Audience.getAudienceById(id, audienceId, accessToken, secretToken);
-  res.send(result);
+  res.send({ data: result, message: `Success Get Audience For ${req.body.user.username}` });
 };
 
 export const getAllTargetingCriteria = async (req: Request, res: Response, next: NextFunction) => {
@@ -97,7 +97,7 @@ export const getAllTargetingCriteria = async (req: Request, res: Response, next:
       return acc;
     }
   }, []);
-  res.send(unicResult);
+  res.send({ data: unicResult, message: `Success Get Targeting Criteria For ${req.body.user.username}` });
 };
 
 export const promoteTweet = async (req: Request, res: Response, next: NextFunction) => {
@@ -158,10 +158,9 @@ export const promoteTweet = async (req: Request, res: Response, next: NextFuncti
 export const createNewCampaign = async (req: Request, res: Response, next: NextFunction) => {
   const { campaignName, dailyBudget, targetingValue, fundingInstrument, page } = req.body;
   const adAccountId = req.params.id;
-  const promotedUserId = req.body.page.user_id;
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
   if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
-
+  console.log(targetingValue);
   const newCampaingReq: newCampaignParams = {
     funding_instrument_id: fundingInstrument,
     name: campaignName,
@@ -193,19 +192,18 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
     secretToken
   );
 
-  const targetingCriteriaReq: TargetingCriteriaParams = {
-    line_item_id: newLineItem.id,
-    operator_type: targetingValue.operator_type as OperatorType,
-    targeting_type: targetingValue.targeting_type as TargetingType,
-    targeting_value: targetingValue.targeting_value as string,
-  };
+  const targetsPromises = targetingValue.map((target: any) => {
+    const targetingCriteriaReq: TargetingCriteriaParams = {
+      line_item_id: newLineItem.id,
+      operator_type: target.operator_type as OperatorType,
+      targeting_type: target.targeting_type as TargetingType,
+      targeting_value: target.targeting_value as string,
+    };
 
-  const targetingCriteria = await TwitterService.createTargetingCriteria(
-    adAccountId,
-    targetingCriteriaReq,
-    accessToken,
-    secretToken
-  );
+    return TwitterService.createTargetingCriteria(adAccountId, targetingCriteriaReq, accessToken, secretToken);
+  });
+
+  const targets = await Promise.all(targetsPromises);
 
   const updateLineItemReq = {
     entity_status: EntityStatus.ACTIVE,
@@ -226,6 +224,10 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
     platform: 'twitter',
   };
 
+  const audiences = targets.map((target: any) => {
+    return { id: target.targeting_value, name: target.name };
+  });
+
   const automation = {
     objective: updateLineItem.objective,
     dailyBudget: updateLineItem.bid_amount_local_micro,
@@ -234,13 +236,46 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
       name: updateLineItem.name,
     },
     adAccountId: adAccountId,
-    audiences: [{ id: targetingCriteria.targeting_value, name: targetingCriteria.name }],
+    audiences: audiences,
     platform: 'twitter',
   };
 
   req.body.page = newPage;
   req.body.automation = automation;
   next();
+};
+
+export const simpleCreation = async (req: Request, res: Response, next: NextFunction) => {
+  const { campaign, page, user } = req.body;
+  const { accessToken, secretToken } = req.body.user.platforms.twitter;
+  if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
+  const adAccountId = req.params.id;
+
+  const newPage = new Page({
+    pageId: page.user_id,
+    name: page.name,
+    picture: page.picture,
+    user: user._id,
+    platform: 'twitter',
+  });
+
+  const automation = new Automation({
+    objective: 'SIMPLE',
+    user: user._id,
+    dailyBudget: campaign.daily_budget_amount_local_micro,
+    campaign: {
+      id: campaign.id,
+      name: campaign.name,
+    },
+    adAccountId: adAccountId,
+    page: newPage._id,
+    platform: 'twitter',
+  });
+
+  await automation.save();
+  await newPage.save();
+
+  res.send({ data: automation, message: `Success Create Automation For ${req.body.user.username}` });
 };
 
 export const toggleStatus = async (req: Request, res: Response, next: NextFunction) => {

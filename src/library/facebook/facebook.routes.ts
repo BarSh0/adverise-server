@@ -10,6 +10,7 @@ router.get('/:id/accounts', authValidation, tryCatch(Controllers.Facebook.getAcc
 router.get('/:id/campaigns', authValidation, tryCatch(Controllers.Facebook.getCampaigns));
 
 router.post('/:id/campaigns', authValidation, tryCatch(Controllers.Facebook.createAutomation));
+router.post('/:id/simple', authValidation, tryCatch(Controllers.Facebook.simpleCreation));
 router.post('/signin', tryCatch(Controllers.Facebook.signInWithFacebook));
 router.post('/webhook', tryCatch(Controllers.Facebook.promotePost));
 

@@ -3,6 +3,7 @@ import { Automation, AutomationStatusEnum, IAutomation } from '../database/model
 import { IPage, Page } from '../database/models/page.model';
 import { IUser } from '../database/models/user.model';
 import logger from '../utils/logger';
+import AppService from '../services/app';
 
 export const getAllAutomations = async (req: Request, res: Response) => {
   const automations = await Automation.find({ user: req.body.user._id }).populate('page').populate('posts');
@@ -19,7 +20,8 @@ export const postAutomation = async (req: Request, res: Response) => {
   const automation: IAutomation = req.body.automation;
   const page: IPage = req.body.page;
   const user: IUser = req.body.user;
-  const newPage = new Page({ ...page, user: req.body.user._id });
+  page.user = user._id;
+  const newPage = await AppService.Page.create(page);
   await newPage.save();
   const newAutomation = new Automation({ ...automation, page: newPage._id, user: req.body.user._id });
   await newAutomation.save();

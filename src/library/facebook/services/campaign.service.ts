@@ -11,6 +11,49 @@ export enum CampaignStatus {
   PAUSED = 'PAUSED',
 }
 
+export const getAll = async (accessToken: string, accountId: string) => {
+  adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
+  const AdAccount = adsSdk.AdAccount;
+  const account = new AdAccount(accountId);
+  const fields = ['id', 'name', 'objective', 'daily_budget'];
+  const params = {};
+  const campaigns = await account.getCampaigns(fields, params).catch((err) => {
+    console.error(`Error in fetching campaigns of the account: ${accountId}`);
+    throw err;
+  });
+  console.info(`Fetching campaigns of the account: ${accountId} is done!`);
+  return campaigns;
+};
+
+export const get = async (accessToken: string, campaignId: string) => {
+  adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
+  const campaign = new adsSdk.Campaign(campaignId);
+  const fields = ['id', 'name', 'objective', 'daily_budget'];
+  const params = {};
+
+  const fetchedCampaign = await campaign.get(fields, params).catch((err) => {
+    console.error(`Error in fetching campaign ${campaignId}`);
+    throw err;
+  });
+
+  const adsets = await campaign.getAdSets(['id', 'name'], params).catch((err) => {
+    console.error(`Error in fetching adsets of campaign ${campaignId}`);
+    throw err;
+  });
+
+  adsets.map((adset) => {
+    return adset._data;
+  });
+
+  const result = {
+    ...fetchedCampaign._data,
+    adsets: adsets,
+  };
+
+  console.info(`Fetching campaign ${campaignId} is done!`);
+  return result;
+};
+
 export const createCampaign = async (accessToken: string, campaign: IFBCampaign) => {
   FBCampaignValidate(campaign);
   adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
