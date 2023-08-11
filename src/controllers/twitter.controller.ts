@@ -251,6 +251,13 @@ export const simpleCreation = async (req: Request, res: Response, next: NextFunc
   if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const adAccountId = req.params.id;
 
+  const params = {
+    campaign_ids: [campaign.id],
+  };
+
+  const lineItem = await TwitterService.LineItem.get(adAccountId, params, accessToken, secretToken);
+  console.log(lineItem);
+
   const newPage = new Page({
     pageId: page.user_id,
     name: page.name,
@@ -264,7 +271,7 @@ export const simpleCreation = async (req: Request, res: Response, next: NextFunc
     user: user._id,
     dailyBudget: campaign.daily_budget_amount_local_micro,
     campaign: {
-      id: campaign.id,
+      id: lineItem[0].id,
       name: campaign.name,
     },
     adAccountId: adAccountId,
@@ -286,6 +293,7 @@ export const toggleStatus = async (req: Request, res: Response, next: NextFuncti
   const campaignStatus = status ? EntityStatus.ACTIVE : EntityStatus.PAUSED;
   const automation = await Automation.findById(id);
   if (!automation) throw new Error('Automation not found');
+
   const lineItem = await TwitterService.LineItem.getLineItemById(
     automation.adAccountId,
     automation.campaign.id,

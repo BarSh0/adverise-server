@@ -27,6 +27,11 @@ router.put(
   tryCatch(Controllers.Automation.toggleStatus)
 );
 router.post('/signin', tryCatch(Controllers.Twitter.signInWithTwitter));
-router.delete('/:id', tryCatch(Controllers.Twitter.toggleStatus), tryCatch(Controllers.Automation.deleteAutomation));
+router.delete(
+  '/:id',
+  authValidation,
+  tryCatch(Controllers.Twitter.toggleStatus),
+  tryCatch(Controllers.Automation.deleteAutomation)
+);
 
 export default router;

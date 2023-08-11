@@ -10,7 +10,7 @@ const authValidation = async (req: Request, res: Response, next: NextFunction) =
     const { id } = jwt.verify(userAccess, process.env.JWT_SECRET_KEY as string) as { id: string };
     const user = await User.findById(id);
     if (!user) throw new Error('User not found');
-    req.body = { ...req.body, user };
+    req.body.user = user;
     next();
   } catch (error: any) {
     console.log(error);

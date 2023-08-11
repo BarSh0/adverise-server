@@ -1,5 +1,5 @@
 import { LineItemParams } from '../../types/twitterTypes/LineItem';
-import {newTwitterAdsAPI} from './config';
+import { newTwitterAdsAPI } from './config';
 
 export const getLineItemById = async (
   adAccountId: string,
@@ -10,6 +10,26 @@ export const getLineItemById = async (
   const T = newTwitterAdsAPI(accessToken, accessTokenSecret);
   const url = `accounts/${adAccountId}/line_items/${lineItemId}`;
   const params = {};
+  return new Promise((resolve, reject) => {
+    T.get(url, params, (error: any, resp: any, body: any) => {
+      if (error) {
+        console.error(error);
+        reject(error);
+      } else {
+        resolve(body.data);
+      }
+    });
+  });
+};
+
+export const get = async (
+  adAccountId: string,
+  params: any,
+  accessToken: string,
+  accessTokenSecret: string
+): Promise<any> => {
+  const T = newTwitterAdsAPI(accessToken, accessTokenSecret);
+  const url = `accounts/${adAccountId}/line_items`;
   return new Promise((resolve, reject) => {
     T.get(url, params, (error: any, resp: any, body: any) => {
       if (error) {

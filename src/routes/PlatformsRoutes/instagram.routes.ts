@@ -11,5 +11,8 @@ router.post('/campaigns', authValidation, tryCatch(Controllers.Instagram.getCamp
 router.post('/:id/campaigns', authValidation, tryCatch(Controllers.Facebook.createAutomation));
 router.put('/:id/toggle', authValidation, tryCatch(Controllers.Facebook.toggleAutomationStatus));
 router.post('/zapier', tryCatch(Controllers.Instagram.promotePost));
+router.get('/webhook', (req, res) => {
+  res.send(req.query['hub.challenge']);
+});
 
 export default router;
