@@ -1,32 +1,21 @@
 import { NextFunction, Request, Response } from 'express';
-import { Automation, AutomationStatusEnum } from '../database/models/automation.model';
-import { Page } from '../database/models/page.model';
-import { Post } from '../database/models/post.model';
-import { TwitterService } from '../services/twitter';
-import { newCampaignParams } from '../services/twitter/campaigns.service';
-import { EntityStatus, LineItemParams, Objective, Placements, ProductType } from '../types/twitterTypes/LineItem';
-import { PromotedTweetParams } from '../types/twitterTypes/PromotedTweet';
-import { OperatorType, TargetingCriteriaParams, TargetingType } from '../types/twitterTypes/TargetingCriteria';
-import { User } from '../database/models/user.model';
+import { Automation, AutomationStatusEnum, IAutomation } from '../../database/models/automation.model';
+import { IPage, Page } from '../../database/models/page.model';
+import { Post } from '../../database/models/post.model';
+import { TwitterService } from './services';
+import { newCampaignParams } from './services/campaigns.service';
+import { EntityStatus, LineItemParams, Objective, Placements, ProductType } from './types/LineItem';
+import { PromotedTweetParams } from './types/PromotedTweet';
+import { OperatorType, TargetingCriteriaParams, TargetingType } from './types/TargetingCriteria';
+import { User } from '../../database/models/user.model';
 import jwt from 'jsonwebtoken';
+import AppService from '../../services/app';
+import logger from '../../utils/logger';
 
 export const getAdAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
   if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const result = await TwitterService.getAllAdAccounts(accessToken, secretToken);
-  // try {
-  //   const accounts = await Promise.all(
-  //     body.data.map(async (account: any) => {
-  //       const adGroups = await getAllLineItems(account.id);
-  //       return new AppAdAccount(account.id, account.name, { data: adGroups });
-  //     })
-  //   );
-  //   console.log(accounts);
-  //   resolve(accounts);
-  // } catch (err) {
-  //   console.error('Error:', err);
-  //   reject(err);
-  // }
   res.send({ data: result, message: `Success Get Ad Account For ${req.body.user.username}` });
 };
 
@@ -156,23 +145,18 @@ export const promoteTweet = async (req: Request, res: Response, next: NextFuncti
 };
 
 export const createNewCampaign = async (req: Request, res: Response, next: NextFunction) => {
-  const { campaignName, dailyBudget, targetingValue, fundingInstrument, page } = req.body;
+  const { campaignName, dailyBudget, targetingValue, fundingInstrument, page, user } = req.body;
   const adAccountId = req.params.id;
-  const { accessToken, secretToken } = req.body.user.platforms.twitter;
-  if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
-  console.log(targetingValue);
+  const { accessToken, secretToken } = user.platforms.twitter;
+
   const newCampaingReq: newCampaignParams = {
     funding_instrument_id: fundingInstrument,
     name: campaignName,
     daily_budget_amount_local_micro: dailyBudget * 100,
   };
 
-  const newCampaign = await TwitterService.Campaign.createCampaign(
-    adAccountId,
-    newCampaingReq,
-    accessToken,
-    secretToken
-  );
+  const createCampaign = TwitterService.Campaign.createCampaign;
+  const newCampaign = await createCampaign(adAccountId, newCampaingReq, accessToken, secretToken);
 
   const newLineItemReq: LineItemParams = {
     campaign_id: newCampaign.id,
@@ -185,12 +169,8 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
     start_time: new Date().toISOString().slice(0, 19) + 'Z',
   };
 
-  const newLineItem = await TwitterService.LineItem.createLineItem(
-    adAccountId,
-    newLineItemReq,
-    accessToken,
-    secretToken
-  );
+  const createLineItem = TwitterService.LineItem.createLineItem;
+  const newLineItem = await createLineItem(adAccountId, newLineItemReq, accessToken, secretToken);
 
   const targetsPromises = targetingValue.map((target: any) => {
     const targetingCriteriaReq: TargetingCriteriaParams = {
@@ -209,7 +189,8 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
     entity_status: EntityStatus.ACTIVE,
   };
 
-  const updateLineItem = await TwitterService.LineItem.updateLineItem(
+  const updateLineItem = TwitterService.LineItem.updateLineItem;
+  const updatedLineItem = await updateLineItem(
     adAccountId,
     newLineItem.id,
     updateLineItemReq,
@@ -217,32 +198,34 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
     secretToken
   );
 
-  const newPage = {
+  const newPage = await AppService.Page.create({
     pageId: page.user_id,
     name: page.name,
     picture: page.picture,
     platform: 'twitter',
-  };
+    user: user._id,
+  } as IPage);
 
   const audiences = targets.map((target: any) => {
     return { id: target.targeting_value, name: target.name };
   });
 
-  const automation = {
-    objective: updateLineItem.objective,
-    dailyBudget: updateLineItem.bid_amount_local_micro,
+  const newAutomation = await AppService.Automation.create({
+    objective: updatedLineItem.objective,
+    dailyBudget: updatedLineItem.bid_amount_local_micro,
     campaign: {
-      id: updateLineItem.id,
-      name: updateLineItem.name,
+      id: updatedLineItem.id,
+      name: updatedLineItem.name,
     },
     adAccountId: adAccountId,
     audiences: audiences,
     platform: 'twitter',
-  };
+    page: newPage._id,
+    user: user._id,
+  } as IAutomation);
 
-  req.body.page = newPage;
-  req.body.automation = automation;
-  next();
+  logger.info(`The user ${user.username} created a new automation for the page ${page.name}`);
+  res.status(200).send({ data: newAutomation, message: 'Automation created successfully' });
 };
 
 export const simpleCreation = async (req: Request, res: Response, next: NextFunction) => {

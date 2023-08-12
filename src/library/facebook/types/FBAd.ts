@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import logger from '../../utils/logger';
+import logger from '../../../utils/logger';
 
 type IFBAd = {
   accountId: string;

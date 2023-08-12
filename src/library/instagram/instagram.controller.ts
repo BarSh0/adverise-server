@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
-import IGService from '../services/instagram';
-import { Post, TPost } from '../database/models/post.model';
-import { Page } from '../database/models/page.model';
-import { Automation } from '../database/models/automation.model';
-import { facebookService } from '../library/facebook/services';
-import { IFBAdCreative, IFBCampaign } from '../types/facebookTypes';
+import IGService from './services';
+import { Post, TPost } from '../../database/models/post.model';
+import { Page } from '../../database/models/page.model';
+import { Automation } from '../../database/models/automation.model';
+import { FBServices } from '../facebook/services';
+import { IFBAdCreative, IFBCampaign } from '../facebook/types';
 import * as adsSdk from 'facebook-nodejs-business-sdk';
-import { IUser } from '../database/models/user.model';
+import { IUser } from '../../database/models/user.model';
 
 export const getAdAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken } = req.body.user.platforms.instagram;
@@ -63,7 +63,7 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
 
   //verify access token
 
-  const isNeedDupliaction = await facebookService.Others.isNeedDupliaction(accessToken, automation.campaign.id);
+  const isNeedDupliaction = await FBServices.Others.isNeedDupliaction(accessToken, automation.campaign.id);
 
   if (isNeedDupliaction) {
     console.log(`Duplicating campaign ${automation.campaign.id}`);
@@ -75,20 +75,20 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
       dailyBudget: automation.dailyBudget,
     };
 
-    const newCampaign = await facebookService.Campaign.duplicateCampaign(accessToken, duplicateCampaignReq);
+    const newCampaign = await FBServices.Campaign.duplicateCampaign(accessToken, duplicateCampaignReq);
     automation.campaign.id = newCampaign.id;
     automation.campaign.name = newCampaign._data.name;
     await automation.save();
 
-    const adSets = await facebookService.adSet.get(accessToken, automation.campaign.id);
+    const adSets = await FBServices.adSet.get(accessToken, automation.campaign.id);
     const adSetsPromises = adSets.map(async (adSet: any) => {
-      await facebookService.adSet.duplicate(accessToken, adSet.id, adSet);
+      await FBServices.adSet.duplicate(accessToken, adSet.id, adSet);
     });
 
     await Promise.all(adSetsPromises);
 
     const rulesPromises = automation.rules.map(async (rule: any) => {
-      const newRule = await facebookService.Others.updateRule(
+      const newRule = await FBServices.Others.updateRule(
         accessToken,
         automation.adAccountId,
         automation.campaign.id,
@@ -105,14 +105,14 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
     return;
   }
 
-  const adSets = await facebookService.adSet.get(accessToken, automation.campaign.id);
+  const adSets = await FBServices.adSet.get(accessToken, automation.campaign.id);
   const adCreativeReq: IFBAdCreative = {
     accountId: automation.adAccountId,
     pageId: page.pageId,
     postId: newPost.postId,
   };
 
-  const adCreative = await facebookService.Others.createAdCreative(accessToken, adCreativeReq);
+  const adCreative = await FBServices.Others.createAdCreative(accessToken, adCreativeReq);
 
   const adSetsPromises = adSets.map(async (adSet: any) => {
     const temp = new adsSdk.AdSet(adSet.id);

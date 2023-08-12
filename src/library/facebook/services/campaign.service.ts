@@ -1,6 +1,6 @@
 import { Automation } from '../../../database/models/automation.model';
-import { IFBCampaign } from '../../../types/facebookTypes';
-import { FBCampaignValidate } from '../../../types/facebookTypes/FBCampaign';
+import { IFBCampaign } from '../types';
+import { FBCampaignValidate } from '../types/FBCampaign';
 import * as adsSdk from 'facebook-nodejs-business-sdk';
 import { helpersUtils } from '../../../utils/helpers.utils';
 
@@ -80,7 +80,7 @@ export const createCampaign = async (accessToken: string, campaign: IFBCampaign)
 
   return createdCampaign;
 };
-export const toggleCampaignStatus = async (
+export const toggleStatus = async (
   accessToken: string,
   campaignId: string,
   automationId: string,
@@ -88,7 +88,6 @@ export const toggleCampaignStatus = async (
 ) => {
   adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
   const campaign = new adsSdk.Campaign(campaignId);
-  status = status ? CampaignStatus.ACTIVE : CampaignStatus.PAUSED;
   await campaign.update([], { status }).catch(async (err) => {
     await Automation.findByIdAndUpdate(automationId, { status: 'FAILED' });
     console.error(`Error in updating campaign ${campaignId} status to ${status}`);

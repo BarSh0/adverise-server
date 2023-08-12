@@ -55,6 +55,27 @@ export const getAllCampaigns = async (adAccountId: string, accessToken: string, 
   });
 };
 
+export const duplicate = async (
+  accountId: string,
+  campaignId: string,
+  params: any,
+  accessToken: string,
+  accessTokenSecret: string
+): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    const T = newTwitterAdsAPI(accessToken, accessTokenSecret);
+    const url = `accounts/${accountId}/campaigns/${campaignId}/duplicate`;
+    T.post(url, params, function (error: any, resp: any, body: any) {
+      if (error) {
+        console.error(error);
+        reject(error);
+      } else {
+        resolve(body.data);
+      }
+    });
+  });
+};
+
 export const createCampaign = async (
   accountId: string,
   req: newCampaignParams,
@@ -103,4 +124,3 @@ export const updateCampaign = async (
     });
   });
 };
-

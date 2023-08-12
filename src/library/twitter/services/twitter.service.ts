@@ -1,4 +1,4 @@
-import { LocationType, TargetingCriteriaParams } from '../../types/twitterTypes/TargetingCriteria';
+import { LocationType, TargetingCriteriaParams } from '../types/TargetingCriteria';
 import { newTwitterAdsAPI } from './config';
 
 // need to be by userId

@@ -8,13 +8,11 @@ interface IPage extends Document {
   picture: string;
   platform: string;
   user: mongoose.Types.ObjectId | IUser;
-  automation: mongoose.Schema.Types.ObjectId | IAutomation;
 }
 
 const PageSchema = new Schema({
   pageId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
-  automation: { type: mongoose.Schema.Types.ObjectId, ref: 'Automation' },
   picture: { type: String },
   platform: { type: String, required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

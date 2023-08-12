@@ -12,21 +12,19 @@ router.get('/:id/campaigns', authValidation, tryCatch(Controllers.Twitter.getCam
 router.get('/:id/audiences', authValidation, tryCatch(Controllers.Twitter.getAudiences));
 router.get('/:id/audiences/:audienceId', authValidation, tryCatch(Controllers.Twitter.getAudienceById));
 router.get('/:id/targeting-criteria', authValidation, tryCatch(Controllers.Twitter.getAllTargetingCriteria));
-router.post(
-  '/:id/campaigns',
-  authValidation,
-  tryCatch(Controllers.Twitter.createNewCampaign),
-  tryCatch(Controllers.Automation.postAutomation)
-);
+
+router.post('/:id/campaigns', authValidation, tryCatch(Controllers.Twitter.createNewCampaign));
 router.post('/:id/simple', authValidation, tryCatch(Controllers.Twitter.simpleCreation));
 router.post('/zapier', tryCatch(Controllers.Twitter.promoteTweet));
+router.post('/signin', tryCatch(Controllers.Twitter.signInWithTwitter));
+
 router.put(
   '/:id/toggle',
   authValidation,
   tryCatch(Controllers.Twitter.toggleStatus),
   tryCatch(Controllers.Automation.toggleStatus)
 );
-router.post('/signin', tryCatch(Controllers.Twitter.signInWithTwitter));
+
 router.delete(
   '/:id',
   authValidation,

@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import authValidation from '../middleware/authValidation';
 import facebookRoutes from '../library/facebook/facebook.routes';
-import instagramRoutes from './PlatformsRoutes/instagram.routes';
-import twitterRoutes from './PlatformsRoutes/twitter.routes';
+import instagramRoutes from '../library/instagram/instagram.routes';
+import twitterRoutes from '../library/twitter/twitter.routes';
 import authRoutes from './auth.routes';
 import automationRoutes from './automation.routes';
 import pageRoutes from './page.routes';

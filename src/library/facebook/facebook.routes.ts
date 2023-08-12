@@ -8,6 +8,7 @@ const router = Router();
 router.get('/adaccounts', authValidation, tryCatch(Controllers.Facebook.getAdAccounts));
 router.get('/:id/accounts', authValidation, tryCatch(Controllers.Facebook.getAccounts));
 router.get('/:id/campaigns', authValidation, tryCatch(Controllers.Facebook.getCampaigns));
+router.get('/webhook', (req, res) => res.send(req.query['hub.challenge']));
 
 router.post('/:id/campaigns', authValidation, tryCatch(Controllers.Facebook.createAutomation));
 router.post('/:id/simple', authValidation, tryCatch(Controllers.Facebook.simpleCreation));
@@ -17,9 +18,5 @@ router.post('/webhook', tryCatch(Controllers.Facebook.promotePost));
 router.put('/:id/toggle', authValidation, Controllers.Facebook.toggleAutomationStatus);
 
 router.delete('/:id', authValidation, tryCatch(Controllers.Facebook.deleteAutomation));
-
-router.get('/webhook', (req, res) => {
-  res.send(req.query['hub.challenge']);
-});
 
 export default router;

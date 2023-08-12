@@ -1,4 +1,4 @@
-import { LineItemParams } from '../../types/twitterTypes/LineItem';
+import { LineItemParams } from '../types/LineItem';
 import { newTwitterAdsAPI } from './config';
 
 export const getLineItemById = async (

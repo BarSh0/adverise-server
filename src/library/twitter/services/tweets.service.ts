@@ -1,5 +1,5 @@
-import { PromotedTweetParams } from '../../types/twitterTypes/PromotedTweet';
-import {newTwitterAdsAPI} from './config';
+import { PromotedTweetParams } from '../types/PromotedTweet';
+import { newTwitterAdsAPI } from './config';
 
 export const addTweetToLineItem = async (
   adAccountId: string,

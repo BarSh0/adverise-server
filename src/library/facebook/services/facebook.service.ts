@@ -1,8 +1,8 @@
 import * as adsSdk from 'facebook-nodejs-business-sdk';
-import { facebookService } from '.';
-import { FBAdValidate, IFBAd } from '../../../types/facebookTypes/FBAd';
-import { FBAdCreativeValidate, IFBAdCreative } from '../../../types/facebookTypes/FBAdCreative';
-import { FBRuleValidate, IFBRule } from '../../../types/facebookTypes/FBRule';
+import { FBServices } from '.';
+import { FBAdValidate, IFBAd } from '../types/FBAd';
+import { FBAdCreativeValidate, IFBAdCreative } from '../types/FBAdCreative';
+import { FBRuleValidate, IFBRule } from '../types/FBRule';
 import { helpersUtils } from '../../../utils/helpers.utils';
 import logger from '../../../utils/logger';
 
@@ -12,7 +12,7 @@ export const getAdAccounts = async (accessToken: string) => {
   adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
   const account = new adsSdk.User('me');
 
-  const fields = ['id', 'name', 'saved_audiences'];
+  const fields = ['id', 'name', 'saved_audiences.limit(1000)'];
   const params = {};
   let adAccounts = await account.getAdAccounts(fields, params).catch((err) => {
     logger.error(`Error in getting ad accounts`);
@@ -166,7 +166,7 @@ export const verifyAccessToken = async (accessToken: string) => {
 
 export const isNeedDupliaction = async (accessToken: string, campaignId: string) => {
   adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
-  const adSets = await facebookService.adSet.get(accessToken, campaignId);
+  const adSets = await FBServices.adSet.get(accessToken, campaignId);
   const adsPromises = adSets.map(async (adSet: any) => {
     const temp = new adsSdk.AdSet(adSet.id);
     return temp.getAds(['id']);

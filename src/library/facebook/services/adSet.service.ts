@@ -1,5 +1,5 @@
 import * as adsSdk from 'facebook-nodejs-business-sdk';
-import { FBAdSetValidate, IFBAdSet } from '../../../types/facebookTypes/FBAdSet';
+import { FBAdSetValidate, IFBAdSet } from '../types/FBAdSet';
 
 const isDevMode = process.env.NODE_ENV === 'development';
 
