@@ -13,7 +13,7 @@ export const getAdAccounts = async (accessToken: string) => {
   const account = new adsSdk.User('me');
 
   const fields = ['id', 'name', 'saved_audiences.limit(1000)'];
-  const params = {};
+  const params = { limit: 500 };
   let adAccounts = await account.getAdAccounts(fields, params).catch((err) => {
     logger.error(`Error in getting ad accounts`);
     throw err;
