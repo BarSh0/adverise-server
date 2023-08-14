@@ -35,33 +35,33 @@ export const getAudiencesOfAdAccount = async (accessToken: string, adAccountId: 
   return audiences;
 };
 
-export const createAdCreative = async (accessToken: string, adCreative: IFBAdCreative) => {
-  FBAdCreativeValidate(adCreative);
+export const createAdCreative = async (accessToken: string, accountId: string, params: any) => {
   adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
-  const account = new adsSdk.AdAccount(adCreative.accountId);
-
-  let fields = ['id'];
-  let params = {
-    name: 'Advertise - Facebook Post',
-    object_story_spec: {
-      page_id: adCreative.pageId,
-      link_data: {
-        call_to_action: {
-          type: 'LEARN_MORE',
-        },
-        link: 'https://www.facebook.com/' + adCreative.pageId + '/posts/' + adCreative.postId,
-        message: 'Advertise your business on Facebook',
-      },
-    },
-  };
+  const account = new adsSdk.AdAccount(accountId);
+  let fields = ['id', 'object_story_id'];
 
   const createdAdCreative = await account.createAdCreative(fields, params).catch((err) => {
-    logger.error(`Error in creating ad creative for page ${adCreative.pageId} of the account: ${adCreative.accountId}`);
+    logger.error(`Error in creating ad creative for  account: ${accountId}`);
     throw err;
   });
-  logger.info(`Creating ad creative for page ${adCreative.pageId} of the account: ${adCreative.accountId}`);
+  logger.info(`Creating ad creative for  account: ${accountId}`);
 
   return createdAdCreative;
+};
+
+export const getLastPostId = async (accessToken: string, pageId: string) => {
+  adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
+  const page = new adsSdk.Page(pageId);
+
+  const fields = ['message', 'created_time', 'id'];
+  const params = { limit: 1 };
+  const post = await page.getPosts(fields, params).catch((err) => {
+    logger.error(`Error in getting last post for page ${pageId}`);
+    throw err;
+  });
+
+  logger.info(`Getting last post for page ${pageId}`);
+  return post[0].id;
 };
 
 export const createAd = async (accessToken: string, ad: IFBAd) => {
@@ -71,10 +71,10 @@ export const createAd = async (accessToken: string, ad: IFBAd) => {
 
   let fields = ['id'];
   let params = {
-    name: 'Adverise -' + helpersUtils.getCurrentDate(),
+    name: 'Easy2Ad -' + helpersUtils.getCurrentDate(),
     adset_id: ad.adSetId,
     creative: { creative_id: ad.creativeId },
-    status: 'PAUSED',
+    status: isDevMode ? 'PAUSED' : 'ACTIVE',
   };
 
   const createdAd = await account.createAd(fields, params).catch((err) => {

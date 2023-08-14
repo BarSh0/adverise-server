@@ -106,13 +106,12 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
   }
 
   const adSets = await FBServices.adSet.get(accessToken, automation.campaign.id);
-  const adCreativeReq: IFBAdCreative = {
-    accountId: automation.adAccountId,
-    pageId: page.pageId,
-    postId: newPost.postId,
+  const adCreativeReq = {
+    name: `Easy2Ad ${Date.now()}`,
+    object_story_id: newPost.postId,
   };
 
-  const adCreative = await FBServices.Others.createAdCreative(accessToken, adCreativeReq);
+  const adCreative = await FBServices.Others.createAdCreative(accessToken, automation.adAccountId, adCreativeReq);
 
   const adSetsPromises = adSets.map(async (adSet: any) => {
     const temp = new adsSdk.AdSet(adSet.id);

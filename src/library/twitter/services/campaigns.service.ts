@@ -89,6 +89,7 @@ export const createCampaign = async (
       entity_status: req.entity_status || 'PAUSED',
       funding_instrument_id: req.funding_instrument_id,
       daily_budget_amount_local_micro: req.daily_budget_amount_local_micro,
+      currency: 'USD',
     };
 
     const url = `accounts/${accountId}/campaigns`;

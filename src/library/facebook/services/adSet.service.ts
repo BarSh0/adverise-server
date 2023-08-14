@@ -35,7 +35,7 @@ export const create = async (accessToken: string, adSet: IFBAdSet) => {
     billing_event: 'IMPRESSIONS',
     bid_strategy: 'LOWEST_COST_WITHOUT_CAP',
     targeting: targeting,
-    status: 'PAUSED',
+    status: isDevMode ? 'PAUSED' : 'ACTIVE',
   };
 
   const createdAdSet = await account.createAdSet(fields, params).catch((err) => {

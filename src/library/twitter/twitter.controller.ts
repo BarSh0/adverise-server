@@ -15,7 +15,7 @@ import logger from '../../utils/logger';
 export const getAdAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
   if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
-  const result = await TwitterService.getAllAdAccounts(accessToken, secretToken);
+  const result = await TwitterService.Others.getAllAdAccounts(accessToken, secretToken);
   res.send({ data: result, message: `Success Get Ad Account For ${req.body.user.username}` });
 };
 
@@ -23,7 +23,7 @@ export const getAccounts = async (req: Request, res: Response, next: NextFunctio
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
   if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
   const { id } = req.params;
-  const accounts = await TwitterService.getAllAccounts(id, accessToken, secretToken);
+  const accounts = await TwitterService.Others.getAllAccounts(id, accessToken, secretToken);
   const promiseArray = accounts.map(async (account: any) => {
     const accountMoreDetails = await TwitterService.User.getUserDetails(account.user_id, accessToken, secretToken);
     const accountWithDetails = {
@@ -41,7 +41,7 @@ export const getFundingInstruments = async (req: Request, res: Response, next: N
   const { id } = req.params;
   const { accessToken, secretToken } = req.body.user.platforms.twitter;
   if (!accessToken || !secretToken) throw new Error('You need to connect your twitter account');
-  const fundingInstrumentId = await TwitterService.getFundingInstrumentsId(id, accessToken, secretToken);
+  const fundingInstrumentId = await TwitterService.Others.getFundingInstrumentsId(id, accessToken, secretToken);
   if (!fundingInstrumentId) throw new Error('You need to add a funding instrument to your account');
   res.send({ data: fundingInstrumentId, message: `Success Get Funding Instruments For ${req.body.user.username}` });
 };
@@ -77,7 +77,7 @@ export const getAllTargetingCriteria = async (req: Request, res: Response, next:
   const { id } = req.params;
   const lineItems = await TwitterService.LineItem.getAllLineItems(id, accessToken, secretToken);
   const lineItemsIds = lineItems.map((lineitem: any) => lineitem.id);
-  const result = await TwitterService.getAllTargetingCriteria(id, lineItemsIds, accessToken, secretToken);
+  const result = await TwitterService.Others.getAllTargetingCriteria(id, lineItemsIds, accessToken, secretToken);
   const unicResult = result.reduce((acc: any, current: any) => {
     const x = acc.find((item: any) => item.targeting_value === current.targeting_value);
     if (!x) {
@@ -152,7 +152,7 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
   const newCampaingReq: newCampaignParams = {
     funding_instrument_id: fundingInstrument,
     name: campaignName,
-    daily_budget_amount_local_micro: dailyBudget * 100,
+    daily_budget_amount_local_micro: dailyBudget * 1000000,
   };
 
   const createCampaign = TwitterService.Campaign.createCampaign;
@@ -161,7 +161,7 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
   const newLineItemReq: LineItemParams = {
     campaign_id: newCampaign.id,
     name: campaignName,
-    bid_amount_local_micro: dailyBudget * 100,
+    bid_amount_local_micro: dailyBudget * 1000000,
     product_type: ProductType.PROMOTED_TWEETS,
     objective: Objective.ENGAGEMENTS,
     placements: [Placements.ALL_ON_TWITTER],
@@ -180,7 +180,7 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
       targeting_value: target.targeting_value as string,
     };
 
-    return TwitterService.createTargetingCriteria(adAccountId, targetingCriteriaReq, accessToken, secretToken);
+    return TwitterService.Others.createTargetingCriteria(adAccountId, targetingCriteriaReq, accessToken, secretToken);
   });
 
   const targets = await Promise.all(targetsPromises);

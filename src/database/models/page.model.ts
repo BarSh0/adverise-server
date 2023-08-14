@@ -8,6 +8,7 @@ interface IPage extends Document {
   picture: string;
   platform: string;
   user: mongoose.Types.ObjectId | IUser;
+  accessToken?: string;
 }
 
 const PageSchema = new Schema({
@@ -16,6 +17,7 @@ const PageSchema = new Schema({
   picture: { type: String },
   platform: { type: String, required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  accessToken: { type: String },
 });
 
 const Page: Model<IPage> = model<IPage>('Page', PageSchema);

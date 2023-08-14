@@ -45,14 +45,14 @@ export const createAutomation = async (req: Request, res: Response, next: NextFu
   if (!accessToken) throw new Error('Access token is missing');
 
   const adPauseTime = helpersUtils.amountOfHoursCalc(amount, of);
+  const pageAccessToken = await FBServices.Tokens.fetchLongLivedAccessTokenForPage(page.pageId, accessToken);
 
   const newPage = new Page({
     ...page,
     platform: 'facebook',
     user: new mongoose.Types.ObjectId(user._id),
+    accessToken: pageAccessToken,
   });
-
-  await newPage.save();
 
   const campaign: IFBCampaign = {
     accountId: adAccount.id,
@@ -62,15 +62,16 @@ export const createAutomation = async (req: Request, res: Response, next: NextFu
   };
 
   const newCampaign = await FBServices.Campaign.createCampaign(accessToken, campaign);
+  const lastPostId = await FBServices.Others.getLastPostId(pageAccessToken, page.pageId);
 
-  const adCreative: IFBAdCreative = {
-    accountId: adAccount.id,
-    pageId: page.pageId,
+  const adCreative = {
+    name: `Easy2Ad - ${Date.now()}`,
+    object_story_id: lastPostId,
   };
 
-  const newAdCreative = await FBServices.Others.createAdCreative(accessToken, adCreative);
+  const newAdCreative = await FBServices.Others.createAdCreative(accessToken, adAccount.id, adCreative);
 
-  const newAds = await Promise.all(
+  await Promise.all(
     audience.map(async (audience: any) => {
       const adSet: IFBAdSet = {
         accountId: adAccount.id,
@@ -116,11 +117,11 @@ export const createAutomation = async (req: Request, res: Response, next: NextFu
     postTypes: ['photo', 'video', 'link'],
   };
 
-  const pageAccessToken = await FBServices.Tokens.fetchLongLivedAccessTokenForPage(page.pageId, accessToken);
   await FBServices.Page.subscribePageToWebhook(page.pageId, pageAccessToken);
   const newAutomation = await Automation.create(automation);
+  await newPage.save();
 
-  res.status(200).send(newAutomation);
+  res.status(200).send({ data: newAutomation, message: 'Automation created successfully' });
 };
 
 export const simpleCreation = async (req: Request, res: Response, next: NextFunction) => {
@@ -262,13 +263,12 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
   }
 
   const adSets = await FBServices.adSet.get(accessToken, automation.campaign.id);
-  const adCreativeReq: IFBAdCreative = {
-    accountId: automation.adAccountId,
-    pageId: page.pageId,
-    postId: newPost.postId,
+  const adCreativeReq = {
+    name: `Easy2Ad - ${Date.now()}`,
+    object_story_id: newPost.postId,
   };
 
-  const adCreative = await FBServices.Others.createAdCreative(accessToken, adCreativeReq);
+  const adCreative = await FBServices.Others.createAdCreative(accessToken, automation.adAccountId, adCreativeReq);
 
   console.log(`Updating ad sets with creative ${adCreative.id}`);
 

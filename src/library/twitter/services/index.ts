@@ -3,18 +3,7 @@ import * as LineItem from './lineItems.service';
 import * as Tweet from './tweets.service';
 import * as User from './user.service';
 import * as Audience from './audience.service';
-import {
-  createTargetingCriteria,
-  getAllAccounts,
-  getAllAdAccounts,
-  getAllAudiences,
-  getAllTweets,
-  getFundingInstrumentsId,
-  getTargetingValue,
-  getTweetById,
-  getAllTargetingCriteria,
-  test,
-} from './twitter.service';
+import * as Others from './twitter.service';
 
 export const TwitterService = {
   LineItem,
@@ -22,14 +11,5 @@ export const TwitterService = {
   Tweet,
   User,
   Audience,
-  createTargetingCriteria,
-  getAllTargetingCriteria,
-  getTargetingValue,
-  getAllAdAccounts,
-  getAllAccounts,
-  getAllAudiences,
-  getAllTweets,
-  getTweetById,
-  getFundingInstrumentsId,
-  test,
+  Others,
 };
