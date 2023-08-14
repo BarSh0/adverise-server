@@ -11,14 +11,14 @@ import { IUser } from '../../database/models/user.model';
 export const getAdAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken } = req.body.user.platforms.instagram;
   const IGadAccounts = await IGService.AdAccount.get(accessToken);
-  res.send(IGadAccounts);
+  res.send({ data: IGadAccounts, message: 'Ad accounts fetched successfully' });
 };
 export const getAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   const { accessToken } = req.body.user.platforms.instagram;
   const result = await IGService.Page.get(accessToken, id);
 
-  res.send(result);
+  res.send({ data: result, message: 'Accounts fetched successfully' });
 };
 export const getCampaigns = async (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello World');

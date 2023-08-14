@@ -98,58 +98,12 @@ Content-Type: application/json
     ],
     "object": "page"
 }
+###
 
-# {
-#   "entry": [
-#     {
-#       "changes": [
-#         {
-#           "field": "feed",
-#           "value": {
-#             "created_time": 1684656306,
-#             "from": {
-#               "id": "123456789",
-#               "name": "John Doe"
-#             },
-#             "item": "note",
-#             "note_id": "987654321",
-#             "post_id": "123456789_987654321",
-#             "published": 1,
-#             "verb": "add"
-#           }
-#         }
-#       ],
-#       "id": "123456789",
-#       "time": 1684656321
-#     }
-#   ],
-#   "object": "page"
-# }
+POST http://localhost:8080/facebook/test
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZDRiNWJhMDM3NDFhZmU4MTRiNDY2YSIsImlhdCI6MTY5MjAwMTI1NiwiZXhwIjoxNjk0NTkzMjU2fQ.-A_qj_IjjWt_6S_H5NtN8B6QRXhqqfp96wqyefGnd1k
+Content-Type: application/json
 
-# {
-#     "entry": [
-#         {
-#             "changes": [
-#                 {
-#                     "field": "feed",
-#                     "value": {
-#                         "created_time": 1684840940,
-#                         "from": {
-#                             "id": "230609070385496",
-#                             "name": "מרינה פטריות הגליל"
-#                         },
-#                         "item": "video",
-#                         "link": "https://scontent.xx.fbcdn.net/v/t50.12441-16/348421622_6021058814687587_1286578627349719543_n.mp4?_nc_cat=106&ccb=1-7&_nc_sid=985c63&efg=eyJybHIiOjEyMTgsInJsYSI6NTEyLCJ2ZW5jb2RlX3RhZyI6Inhwdl9zZF9wcm9ncmVzc2l2ZSJ9&_nc_ohc=jCwRoTu_BywAX8R2OJ4&_nc_ht=scontent.xx&oh=00_AfCEHyRa-Scr7VKFcTZEyocJY4p-_S08NQ-liy1J6RDz9Q&oe=6471150F",
-#                         "post_id": "230609070385496_1008999243419527",
-#                         "published": 1,
-#                         "verb": "add",
-#                         "video_id": "1008999243419527"
-#                     }
-#                 }
-#             ],
-#             "id": "230609070385496",
-#             "time": 1684840953
-#         }
-#     ],
-#     "object": "page"
-# }
+{
+    "pageId": "2457972897588294"
+}

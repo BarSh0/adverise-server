@@ -61,7 +61,8 @@ export const getLastPostId = async (accessToken: string, pageId: string) => {
   });
 
   logger.info(`Getting last post for page ${pageId}`);
-  return post[0].id;
+  return post;
+  // return post[0].id;
 };
 
 export const createAd = async (accessToken: string, ad: IFBAd) => {
