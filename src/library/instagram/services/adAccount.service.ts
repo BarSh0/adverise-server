@@ -7,7 +7,7 @@ export const get = async (accessToken: string) => {
   const account = new adsSdk.User('me');
 
   const fields = ['id', 'name', 'instagram_accounts', 'saved_audiences'];
-  const params = {};
+  const params = { limit: 500 };
 
   const adAccounts = await account.getAdAccounts(fields, params).catch((err) => {
     console.error(`Error in getting ad accounts`);
