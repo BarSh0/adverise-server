@@ -145,7 +145,17 @@ export const promoteTweet = async (req: Request, res: Response, next: NextFuncti
 };
 
 export const createNewCampaign = async (req: Request, res: Response, next: NextFunction) => {
-  const { campaignName, dailyBudget, targetingValue, fundingInstrument, page, user } = req.body;
+  const {
+    campaignName,
+    productType,
+    objective,
+    placement,
+    dailyBudget,
+    targetingValue,
+    fundingInstrument,
+    page,
+    user,
+  } = req.body;
   const adAccountId = req.params.id;
   const { accessToken, secretToken } = user.platforms.twitter;
 
@@ -162,9 +172,9 @@ export const createNewCampaign = async (req: Request, res: Response, next: NextF
     campaign_id: newCampaign.id,
     name: campaignName,
     bid_amount_local_micro: dailyBudget * 1000000,
-    product_type: ProductType.PROMOTED_TWEETS,
-    objective: Objective.ENGAGEMENTS,
-    placements: [Placements.ALL_ON_TWITTER],
+    product_type: productType,
+    objective: objective,
+    placements: [placement],
     entity_status: EntityStatus.PAUSED,
     start_time: new Date().toISOString().slice(0, 19) + 'Z',
   };
