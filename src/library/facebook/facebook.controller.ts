@@ -192,8 +192,8 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
   const page = await Page.findOne({ pageId: value.from.id });
   if (!page) return res.send();
 
-  logger.info(`Get request to promote post ${value.post_id} from page ${value.from.name}`);
-  console.log(req.body);
+  logger.info(`Get request to promote post ${value.post_id} from page ${value.from.name}` + JSON.stringify(req.body));
+
   const automation = await Automation.findOne({ page: page._id }).populate('user');
   if (!automation) throw new Error('automation not found');
   if (automation.status !== AutomationStatusEnum.ACTIVE) throw new Error('automation is not active');
