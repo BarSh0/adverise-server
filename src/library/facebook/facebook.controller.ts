@@ -273,6 +273,18 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
 
   console.log(`Updating ad sets with creative ${adCreative.id}`);
 
+  const newAdsPromises = adSets.map(async (adSet: any) => {
+    const newAd = await FBServices.Others.createAd(accessToken, {
+      accountId: automation.adAccountId,
+      adSetId: adSet.id,
+      creativeId: adCreative.id,
+      objective: automation.objective,
+    });
+    return newAd;
+  });
+
+  await Promise.all(newAdsPromises);
+
   const adSetsPromises = adSets.map(async (adSet: any) => {
     const temp = new adsSdk.AdSet(adSet.id);
     return temp.update([], { creative: { creative_id: adCreative.id } });

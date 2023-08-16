@@ -76,7 +76,23 @@ export const createAd = async (accessToken: string, ad: IFBAd) => {
     adset_id: ad.adSetId,
     creative: { creative_id: ad.creativeId },
     status: isDevMode ? 'PAUSED' : 'ACTIVE',
-  };
+  } as any;
+
+  const adPixels = await account.getAdsPixels(['id']).catch((err) => {
+    console.log('error in fetching ads pixels of adaccount - ' + ad.accountId);
+    console.log(err);
+
+    throw err;
+  });
+
+  if (adPixels.length > 0) {
+    params['tracking_specs'] = [
+      {
+        'action.type': ['offsite_conversion'],
+        fb_pixel: [adPixels[0].id],
+      },
+    ];
+  }
 
   const createdAd = await account.createAd(fields, params).catch((err) => {
     logger.error(`Error in creating ad for ad set ${ad.adSetId} of the account: ${ad.accountId}`);
