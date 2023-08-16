@@ -285,13 +285,6 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
 
   await Promise.all(newAdsPromises);
 
-  const adSetsPromises = adSets.map(async (adSet: any) => {
-    const temp = new adsSdk.AdSet(adSet.id);
-    return temp.update([], { creative: { creative_id: adCreative.id } });
-  });
-
-  await Promise.all(adSetsPromises);
-
   newPost.handled = true;
   await newPost.save();
 
