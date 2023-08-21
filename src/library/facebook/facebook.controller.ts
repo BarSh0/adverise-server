@@ -12,6 +12,7 @@ import * as adsSdk from 'facebook-nodejs-business-sdk';
 import jwt from 'jsonwebtoken';
 import AppService from '../../services/app';
 import { CampaignStatus } from './services/campaign.service';
+import e from 'cors';
 
 export const getAdAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken } = req.body.user.platforms.facebook;
@@ -204,21 +205,27 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
   const dbPost = await Post.findOne({ postId: value.post_id });
   if (dbPost && dbPost.handled) throw new Error('post already handled');
 
-  const post: TPost = {
-    postId: value.post_id,
-    campaignId: automation.campaign.id,
-    page: automation.page._id,
-    item: value.item,
-    itemId: value.item_id,
-    link: value.link,
-    message: value.message,
-  };
+  let newPost;
 
-  const newPost = await Post.create(post);
-  await newPost.save();
+  if (!dbPost) {
+    const post: TPost = {
+      postId: value.post_id,
+      campaignId: automation.campaign.id,
+      page: automation.page._id,
+      item: value.item,
+      itemId: value.item_id,
+      link: value.link,
+      message: value.message,
+    };
 
-  automation.posts.push(newPost._id);
-  await automation.save();
+    newPost = await Post.create(post);
+    await newPost.save();
+
+    automation.posts.push(newPost._id);
+    await automation.save();
+  } else {
+    newPost = dbPost;
+  }
 
   //verify access token
 
