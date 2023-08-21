@@ -27,3 +27,16 @@ export const fetchLongLivedAccessTokenForPage = async (pageId: string, accessTok
 
   return longLivedAccessToken;
 };
+
+export const validateAccessToken = async (accessToken: string) => {
+  const result = axios.get('https://graph.facebook.com/debug_token', {
+    params: {
+      input_token: accessToken,
+      access_token: `${process.env.FB_APP_ID}|${process.env.FB_APP_SECRET}`,
+    },
+  });
+
+  const isValid = (await result).data.data.is_valid;
+
+  return isValid;
+};

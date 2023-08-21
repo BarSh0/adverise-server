@@ -187,12 +187,13 @@ export const toggleAutomationStatus = async (req: Request, res: Response, next: 
 
 export const promotePost = async (req: Request, res: Response, next: NextFunction) => {
   const value = req.body.entry[0].changes[0].value;
-  if (value.verb !== 'add') return res.send();
-  if (value.item !== 'photo') return res.send();
   const page = await Page.findOne({ pageId: value.from.id });
   if (!page) return res.send();
 
   logger.info(`Get request to promote post ${value.post_id} from page ${value.from.name}` + JSON.stringify(req.body));
+  if (value.verb !== 'add') return res.send();
+  if (value.item !== 'photo') return res.send();
+  if (!value.published || value.published === 'false') return res.send();
 
   const automation = await Automation.findOne({ page: page._id }).populate('user');
   if (!automation) throw new Error('automation not found');
