@@ -187,7 +187,10 @@ export const toggleAutomationStatus = async (req: Request, res: Response, next: 
 };
 
 export const promotePost = async (req: Request, res: Response, next: NextFunction) => {
-  logger.info(`Get request` + JSON.stringify(req.body));
+  const field = req.body.entry[0].changes[0].field;
+  if (field === 'picture') {
+    console.log(JSON.stringify(req.body));
+  }
   const value = req.body.entry[0].changes[0].value;
   const page = await Page.findOne({ pageId: value.from.id });
   if (!page) return res.send();
