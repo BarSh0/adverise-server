@@ -13,6 +13,8 @@ import jwt from 'jsonwebtoken';
 import AppService from '../../services/app';
 import { CampaignStatus } from './services/campaign.service';
 import e from 'cors';
+import { gmailService } from '../../services/gmail.service';
+import gmailConfig from '../../config/gmail.config';
 
 export const getAdAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken } = req.body.user.platforms.facebook;
@@ -187,10 +189,6 @@ export const toggleAutomationStatus = async (req: Request, res: Response, next: 
 };
 
 export const promotePost = async (req: Request, res: Response, next: NextFunction) => {
-  const field = req.body.entry[0].changes[0].field;
-  if (field === 'picture') {
-    console.log(JSON.stringify(req.body));
-  }
   const value = req.body.entry[0].changes[0].value;
   const page = await Page.findOne({ pageId: value.from.id });
   if (!page) return res.send();
@@ -232,7 +230,17 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
     newPost = dbPost;
   }
 
-  //verify access token
+  const isValid = await FBServices.Tokens.validateAccessToken(accessToken);
+  if (!isValid) {
+    gmailService.sendMailWithLink(
+      gmailConfig.receiver,
+      'Easy2Ad - Facebook Automation Error',
+      `Access token of user ${user.email} is not valid`,
+      'click here to reactivate the access token',
+      `https://adverise.netlify.app/connections`
+    );
+    throw new Error('Access token is not valid');
+  }
 
   const isNeedDupliaction = await FBServices.Others.isNeedDupliaction(accessToken, automation.campaign.id);
 
