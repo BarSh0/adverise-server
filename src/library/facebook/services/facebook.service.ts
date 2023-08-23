@@ -186,13 +186,10 @@ export const isNeedDupliaction = async (accessToken: string, campaignId: string)
   const adSets = await FBServices.adSet.get(accessToken, campaignId);
   const adsPromises = adSets.map(async (adSet: any) => {
     const temp = new adsSdk.AdSet(adSet.id);
-    return temp.getAds(['id']);
+    const ads = await temp.getAds(['id'], { limit: 50 });
+    return ads.length >= 50;
   });
-  const adsOfAdSets = await Promise.all(adsPromises);
+  const results = await Promise.all(adsPromises);
 
-  adsOfAdSets.forEach((ads) => {
-    if (ads.length >= 50) return true;
-  });
-
-  return false;
+  return results.some((result) => result);
 };

@@ -187,6 +187,7 @@ export const toggleAutomationStatus = async (req: Request, res: Response, next: 
 };
 
 export const promotePost = async (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`Get request` + JSON.stringify(req.body));
   const value = req.body.entry[0].changes[0].value;
   const page = await Page.findOne({ pageId: value.from.id });
   if (!page) return res.send();
@@ -197,13 +198,14 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
   logger.info(`Get request to promote post ${value.post_id} from page ${value.from.name}` + JSON.stringify(req.body));
 
   const automation = await Automation.findOne({ page: page._id }).populate('user');
-  if (!automation) throw new Error('automation not found');
-  if (automation.status !== AutomationStatusEnum.ACTIVE) throw new Error('automation is not active');
+  if (!automation) throw new Error(`Automation of page ${value.from.id} not found`);
+  if (automation.status !== AutomationStatusEnum.ACTIVE)
+    throw new Error(`Automation of page ${value.from.id} is not active`);
   const user = automation.user as IUser;
   const { accessToken } = user.platforms.facebook;
 
   const dbPost = await Post.findOne({ postId: value.post_id });
-  if (dbPost && dbPost.handled) throw new Error('post already handled');
+  if (dbPost && dbPost.handled) throw new Error(`Post ${value.post_id} already handled`);
 
   let newPost;
 
@@ -235,6 +237,7 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
     console.log(`Duplicating campaign ${automation.campaign.id}`);
 
     const duplicateCampaignReq: IFBCampaign = {
+      campaignId: automation.campaign.id,
       accountId: automation.adAccountId,
       pageName: page.name,
       objective: automation.objective,
@@ -266,9 +269,6 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
     });
 
     await Promise.all(rulesPromises);
-
-    res.send({ data: newCampaign, message: 'Post promoted successfully' });
-    return;
   }
 
   const adSets = await FBServices.adSet.get(accessToken, automation.campaign.id);
@@ -279,7 +279,7 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
 
   const adCreative = await FBServices.Others.createAdCreative(accessToken, automation.adAccountId, adCreativeReq);
 
-  console.log(`Updating ad sets with creative ${adCreative.id}`);
+  logger.info(`Updating ad sets with creative ${adCreative.id}`);
 
   const newAdsPromises = adSets.map(async (adSet: any) => {
     const newAd = await FBServices.Others.createAd(accessToken, {
@@ -295,8 +295,10 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
 
   newPost.handled = true;
   await newPost.save();
+  automation.lastOperation = new Date();
+  await automation.save();
 
-  console.log(`Post ${newPost.postId} promoted successfully`);
+  logger.info(`Post ${value.post_id} promoted successfully`);
 
   res.send({ data: newPost, message: 'Post promoted successfully' });
 };
