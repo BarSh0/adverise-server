@@ -1,20 +1,30 @@
+import axios from 'axios';
 import { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
-import { Automation, AutomationStatusEnum } from '../../database/models/automation.model';
-import { IPage, Page } from '../../database/models/page.model';
-import { IFBAd, IFBAdCreative, IFBAdSet, IFBCampaign, IFBRule } from './types';
+import gmailConfig from '../../config/gmail.config';
+import { Automation, AutomationStatusEnum } from '../automation/automation.model';
+import { IPage, Page } from '../page/page.model';
+import { Post, TPost } from '../../database/models/post.model';
+import { IUser, User } from '../../database/models/user.model';
+import AppService from '../../services/app';
+import { gmailService } from '../../services/gmail.service';
 import { helpersUtils } from '../../utils/helpers.utils';
 import logger from '../../utils/logger';
+import { Business } from '../business/business.model';
 import { FBServices } from './services';
-import { IUser, User } from '../../database/models/user.model';
-import { Post, TPost } from '../../database/models/post.model';
-import * as adsSdk from 'facebook-nodejs-business-sdk';
-import jwt from 'jsonwebtoken';
-import AppService from '../../services/app';
 import { CampaignStatus } from './services/campaign.service';
-import e from 'cors';
-import { gmailService } from '../../services/gmail.service';
-import gmailConfig from '../../config/gmail.config';
+import { IFBAd, IFBAdSet, IFBCampaign, IFBRule } from './types';
+import { IAppAdCreative } from './types/AppAdCreative';
+
+type AdData = {
+  adName?: string;
+  adHeadline?: string;
+  adMedia?: string;
+  adCopy?: string;
+  adURL?: string;
+  adUTM?: string;
+};
 
 export const getAdAccounts = async (req: Request, res: Response, next: NextFunction) => {
   const { accessToken } = req.body.user.platforms.facebook;
@@ -36,6 +46,14 @@ export const getCampaigns = async (req: Request, res: Response, next: NextFuncti
   const { accessToken } = req.body.user.platforms.facebook;
   if (!accessToken) throw new Error('Access token is missing');
   const result = await FBServices.Campaign.getAll(accessToken, id);
+  res.send({ data: result, message: 'Campaigns fetched successfully' });
+};
+
+export const getPageCampaigns = async (req: Request, res: Response, next: NextFunction) => {
+  const { account, page } = req.params;
+  const { accessToken } = req.body.user.platforms.facebook;
+  if (!accessToken) throw new Error('Access token is missing');
+  const result = await FBServices.Campaign.getAllPageCampaigns(accessToken, account, page);
   res.send({ data: result, message: 'Campaigns fetched successfully' });
 };
 
@@ -359,4 +377,35 @@ export const deleteAutomation = async (req: Request, res: Response, next: NextFu
   await AppService.Page.remove(page._id);
   await AppService.Automation.remove(automationId);
   res.send({ message: 'Automation deleted successfully' });
+};
+
+export const postAd = async (req: Request, res: Response, next: NextFunction) => {
+  const adData: AdData = req.body.adData;
+  if (!adData.adMedia) throw new Error('Ad media is required');
+  const { id } = req.params;
+  const { accessToken } = req.body.user.platforms.facebook;
+  const business = await Business.findById(id);
+  if (!business) throw new Error('Business not found');
+  const page = await AppService.Page.get(business.page);
+  if (!page) throw new Error('Page not found');
+  const imageBase64: string = await helpersUtils.imageUrlToBase64(adData.adMedia);
+  const image = await FBServices.Others.uploadImage(accessToken, business.businessId, imageBase64);
+
+  const creative = await FBServices.Others.createAdCreativeWithImage(accessToken, {
+    accountId: business.businessId,
+    imageHash: image,
+    adName: adData.adName,
+    adHeadline: adData.adHeadline,
+    pageId: page.pageId,
+    link: adData.adURL,
+    message: adData.adCopy,
+  } as IAppAdCreative);
+
+  const ad = await FBServices.Others.createAd(accessToken, {
+    accountId: business.businessId,
+    adSetId: business.adSetId,
+    creativeId: creative.id,
+    objective: 'POST_ENGAGEMENT',
+  } as IFBAd);
+  res.status(200).send({ data: ad, message: 'New Ad Created Successfully' });
 };

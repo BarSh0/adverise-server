@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { Automation, AutomationStatusEnum, IAutomation } from '../../database/models/automation.model';
-import { IPage, Page } from '../../database/models/page.model';
+import { Automation, AutomationStatusEnum, IAutomation } from '../automation/automation.model';
+import { IPage, Page } from '../page/page.model';
 import { Post } from '../../database/models/post.model';
 import { TwitterService } from './services';
 import { newCampaignParams } from './services/campaigns.service';

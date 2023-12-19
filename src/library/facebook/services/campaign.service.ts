@@ -1,4 +1,4 @@
-import { Automation } from '../../../database/models/automation.model';
+import { Automation } from '../../automation/automation.model';
 import { IFBCampaign } from '../types';
 import { FBCampaignValidate } from '../types/FBCampaign';
 import * as adsSdk from 'facebook-nodejs-business-sdk';
@@ -23,6 +23,24 @@ export const getAll = async (accessToken: string, accountId: string) => {
   });
   console.info(`Fetching campaigns of the account: ${accountId} is done!`);
   return campaigns;
+};
+
+export const getAllPageCampaigns = async (accessToken: string, accountId: string, pageId: string) => {
+  adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
+  const page = new adsSdk.Page(pageId);
+  const account = new adsSdk.AdAccount(accountId);
+
+  const fields = ['id', 'name', 'objective', 'daily_budget', 'status'];
+  const params = {};
+  const campaigns = await account.getCampaigns(fields, params).catch((err) => {
+    console.error(`Error in fetching campaigns of the page: ${pageId}`);
+    throw err;
+  });
+  console.info(`Fetching campaigns of the page: ${pageId} is done!`);
+
+  const pageCampaigns = campaigns.map((campaign) => campaign._data);
+
+  return pageCampaigns;
 };
 
 export const get = async (accessToken: string, campaignId: string) => {

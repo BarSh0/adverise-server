@@ -1,6 +1,6 @@
 import mongoose, { Model, model, Document, Schema } from 'mongoose';
-import { IAutomation } from './automation.model';
-import { IUser } from './user.model';
+import { IAutomation } from '../automation/automation.model';
+import { IUser } from '../../database/models/user.model';
 
 interface IPage extends Document {
   pageId: string;

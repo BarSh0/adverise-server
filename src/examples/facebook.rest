@@ -13,7 +13,6 @@ Content-Type: application/json
 }
 
 ###
-
 GET http://localhost:8080/facebook/adaccounts
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NTNiZWJkMGZlYjM2MWE2N2I2ZGU2YyIsImlhdCI6MTY4NjQ4ODEyNywiZXhwIjoxNjg5MDgwMTI3fQ.s8o2fWaIUApYlHtkQ4K2gibh2OW-dNqoAVinOSwhUMI
 Content-Type: application/json
@@ -28,7 +27,6 @@ Content-Type: application/json
 }
 
 ###
-
 POST http://localhost:8080/facebook/create
 Authorization: 643137dab8f9da95070c6a63
 Content-Type: application/json
@@ -55,7 +53,6 @@ Content-Type: application/json
 }
 
 ###
-
 GET http://localhost:8080/facebook/adaccounts
 Authorization: 64397e16b8f9da95070c6a70
 Content-Type: application/json
@@ -65,7 +62,6 @@ Content-Type: application/json
 }
 
 ###
-
 POST http://localhost:8080/facebook/webhook
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Y2I4MmNlODk3OTg0ZTc3MGE5YWJiYSIsImlhdCI6MTY5MTE0NTc3MywiZXhwIjoxNjkzNzM3NzczfQ.w3BMeTSiAX1lIpUFvJWi0WjXwT4pYQ-0l0UDiqQk1Jk
 Content-Type: application/json
@@ -99,11 +95,11 @@ Content-Type: application/json
     "object": "page"
 }
 ###
-
-POST http://localhost:8080/facebook/test
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZDRiNWJhMDM3NDFhZmU4MTRiNDY2YSIsImlhdCI6MTY5MjAwMTI1NiwiZXhwIjoxNjk0NTkzMjU2fQ.-A_qj_IjjWt_6S_H5NtN8B6QRXhqqfp96wqyefGnd1k
+POST http://localhost:8080/test
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZDRiNWJhMDM3NDFhZmU4MTRiNDY2YSIsImlhdCI6MTcwMjExMzM1NSwiZXhwIjoxNzA0NzA1MzU1fQ.7KFljYKWIuc_-kGZgpBdIAOrOj849VDnpNKfcLZyqg0
 Content-Type: application/json
 
 {
-    "pageId": "2457972897588294"
+    "accountId": "act_387500915456303",
+    "url": "https://drive.google.com/uc?export=view&id=1bo-ryMFsqJ-6YiXRJD_ftiecXrQ9td9F"
 }

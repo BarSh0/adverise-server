@@ -1,5 +1,5 @@
 import AppService from '.';
-import { Automation, IAutomation } from '../../database/models/automation.model';
+import { Automation, IAutomation } from '../../library/automation/automation.model';
 
 export const get = async (params: object, populate: string[] = []): Promise<IAutomation> => {
   const automation = await Automation.findOne(params).populate(populate);
@@ -19,9 +19,8 @@ export const update = async (id: string, details: IAutomation): Promise<IAutomat
   return await automation.save();
 };
 
-export const remove = async (id: string): Promise<IAutomation> => {
+export const remove = async (id: string): Promise<boolean> => {
   const automation = await Automation.findByIdAndDelete(id);
   if (!automation) throw new Error('automation not found');
-  return automation;
+  return true;
 };
-

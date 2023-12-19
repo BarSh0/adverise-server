@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import IGService from './services';
 import { Post, TPost } from '../../database/models/post.model';
-import { Page } from '../../database/models/page.model';
-import { Automation } from '../../database/models/automation.model';
+import { Page } from '../page/page.model';
+import { Automation } from '../automation/automation.model';
 import { FBServices } from '../facebook/services';
 import { IFBAdCreative, IFBCampaign } from '../facebook/types';
 import * as adsSdk from 'facebook-nodejs-business-sdk';

@@ -14,6 +14,9 @@ mongoConnect().then(() => {
   app.use(cors());
   app.use(express.json());
   app.use('/', router);
+  app.use((req, res) => {
+    res.status(404).send({ message: 'Error 404: Bad Request' });
+  });
 
   /**
    * @openapi
@@ -33,3 +36,5 @@ mongoConnect().then(() => {
     swagger(app, PORT);
   });
 });
+
+export default app;

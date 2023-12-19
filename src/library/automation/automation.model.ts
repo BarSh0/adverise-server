@@ -1,5 +1,5 @@
 import mongoose, { Document, Model } from 'mongoose';
-import { IUser } from './user.model';
+import { IUser } from '../../database/models/user.model';
 
 export type AutomationStatus = 'PENDING' | 'ACTIVE' | 'PAUSED' | 'FAILED' | 'ARCHIVED';
 export enum AutomationStatusEnum {

@@ -12,6 +12,7 @@ export const tryCatch = (handler: AsyncRequestHandler) => {
     try {
       await handler(req, res, next);
     } catch (error: any) {
+      console.log(error);
       logger.error(error);
       const status = error.status || 500;
       const message = error.message || 'Something went wrong';

@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import { Automation, AutomationStatusEnum, IAutomation } from '../database/models/automation.model';
-import { IPage, Page } from '../database/models/page.model';
-import { IUser } from '../database/models/user.model';
-import logger from '../utils/logger';
-import AppService from '../services/app';
+import { Automation, AutomationStatusEnum, IAutomation } from './automation.model';
+import { IPage, Page } from '../page/page.model';
+import { IUser } from '../../database/models/user.model';
+import logger from '../../utils/logger';
+import AppService from '../../services/app';
 
 export const getAllAutomations = async (req: Request, res: Response) => {
   const automations = await Automation.find({ user: req.body.user._id }).populate('page').populate('posts');
@@ -33,9 +33,7 @@ export const deleteAutomation = async (req: Request, res: Response) => {
   const { id } = req.params;
   const automation = await Automation.findByIdAndDelete(id);
   if (!automation) throw new Error('Automation not found');
-  const page = await Page.findByIdAndDelete(automation.page);
-  if (!page) throw new Error('Page not found');
-  logger.info(`The user ${req.body.user.username} deleted the automation ${automation._id}`);
+  logger.info(`The user ${req.body.user.username} deleted the automation ${id}`);
   res.status(200).send({ data: automation, message: 'Automation deleted successfully' });
 };
 

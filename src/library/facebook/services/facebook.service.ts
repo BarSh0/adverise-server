@@ -5,6 +5,7 @@ import { FBAdCreativeValidate, IFBAdCreative } from '../types/FBAdCreative';
 import { FBRuleValidate, IFBRule } from '../types/FBRule';
 import { helpersUtils } from '../../../utils/helpers.utils';
 import logger from '../../../utils/logger';
+import { IAppAdCreative } from '../types/AppAdCreative';
 
 const isDevMode = process.env.NODE_ENV === 'development';
 
@@ -192,4 +193,44 @@ export const isNeedDupliaction = async (accessToken: string, campaignId: string)
   const results = await Promise.all(adsPromises);
 
   return results.some((result) => result);
+};
+
+export const uploadImage = async (accessToken: string, accountId: string, image: any) => {
+  adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
+  const account = new adsSdk.AdAccount(accountId);
+  const fields = ['id'];
+  const params = {
+    bytes: image,
+  };
+  const result = await account.createAdImage(fields, params).catch((err) => {
+    logger.error(`Error in uploading image for account: ${accountId}`);
+    throw err;
+  });
+  logger.info(`Uploading image for account: ${accountId} is done!`);
+  return result._data.images.bytes.hash;
+};
+
+export const createAdCreativeWithImage = async (accessToken: string, adCreative: IAppAdCreative) => {
+  // FBAdCreativeValidate(adCreative);
+  adsSdk.FacebookAdsApi.init(accessToken).setDebug(isDevMode);
+  const account = new adsSdk.AdAccount(adCreative.accountId);
+  const fields = ['id', 'object_story_id'];
+  const params = {
+    name: adCreative.adName,
+    object_story_spec: {
+      page_id: adCreative.pageId,
+      link_data: {
+        message: adCreative.message,
+        link: adCreative.link,
+        image_hash: adCreative.imageHash,
+        name: adCreative.adHeadline,
+      },
+    },
+  };
+  const result = await account.createAdCreative(fields, params).catch((err) => {
+    logger.error(`Error in creating ad creative for account: ${adCreative.accountId}`);
+    throw err;
+  });
+  logger.info(`Creating ad creative for account: ${adCreative.accountId} is done!`);
+  return result;
 };

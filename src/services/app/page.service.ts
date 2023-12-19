@@ -1,4 +1,4 @@
-import { IPage, Page } from '../../database/models/page.model';
+import { IPage, Page } from '../../library/page/page.model';
 
 enum PopulateOptions {
   AUTOMATION = 'automation',
@@ -23,8 +23,8 @@ export const update = async (id: any, details: IPage): Promise<IPage> => {
   return await page.save();
 };
 
-export const remove = async (id: any): Promise<IPage> => {
+export const remove = async (id: any): Promise<boolean> => {
   const page = await Page.findByIdAndDelete(id);
   if (!page) throw new Error('page not found');
-  return page;
+  return true;
 };

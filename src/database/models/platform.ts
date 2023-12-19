@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { IAutomation } from './automation.model';
-import { IPage } from './page.model';
+import { IAutomation } from '../../library/automation/automation.model';
+import { IPage } from '../../library/page/page.model';
 
 export interface IPlatform extends mongoose.Document {
   platformId: string;

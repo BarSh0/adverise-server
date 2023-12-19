@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const getCurrentDate = (): string => {
   const today = new Date();
   const day = today.getDate().toString().padStart(2, '0');
@@ -26,9 +28,20 @@ const amountOfHoursCalc = (amount: number, of: string) => {
   return amount;
 };
 
+const imageUrlToBase64 = async (url: string): Promise<string> => {
+  try {
+    const response = await axios.get(url, { responseType: 'arraybuffer' });
+    const base64data = Buffer.from(response.data, 'binary').toString('base64');
+    return base64data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const helpersUtils = {
   getCurrentDate,
   getCurrentTime,
   getCurrentDateTime,
   amountOfHoursCalc,
+  imageUrlToBase64,
 };

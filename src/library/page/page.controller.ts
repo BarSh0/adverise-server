@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { Page } from '../database/models/page.model';
-import { getById } from '../database/queries/getters';
+import { Page } from './page.model';
+import { getById } from '../../database/queries/getters';
 
 export const getAllPages = async (req: Request, res: Response) => {
   const pages = await Page.find();
