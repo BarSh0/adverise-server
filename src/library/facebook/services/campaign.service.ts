@@ -2,7 +2,7 @@ import { Automation } from '../../automation/automation.model';
 import { IFBCampaign } from '../types';
 import { FBCampaignValidate } from '../types/FBCampaign';
 import * as adsSdk from 'facebook-nodejs-business-sdk';
-import { helpersUtils } from '../../../utils/helpers.utils';
+import Utils from '../../../utils';
 
 const isDevMode = process.env.NODE_ENV === 'development';
 
@@ -120,7 +120,7 @@ export const duplicateCampaign = async (accessToken: string, campaign: IFBCampai
   const Campaign = new adsSdk.Campaign(campaign.campaignId);
   const fields = ['id'];
   const params = {
-    name: 'Adverise - ' + campaign.pageName + ' - Facebook Posts' + helpersUtils.getCurrentDate(),
+    name: 'Adverise - ' + campaign.pageName + ' - Facebook Posts' + Utils.Helpers.getCurrentDate(),
     status: 'ACTIVE',
   };
 

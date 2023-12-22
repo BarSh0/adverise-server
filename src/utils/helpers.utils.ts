@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const getCurrentDate = (): string => {
+export const getCurrentDate = (): string => {
   const today = new Date();
   const day = today.getDate().toString().padStart(2, '0');
   const month = (today.getMonth() + 1).toString().padStart(2, '0');
@@ -8,7 +8,7 @@ const getCurrentDate = (): string => {
   return `${day}/${month}/${year}`;
 };
 
-const getCurrentTime = (): string => {
+export const getCurrentTime = (): string => {
   const today = new Date();
   const hours = today.getHours().toString().padStart(2, '0');
   const minutes = today.getMinutes().toString().padStart(2, '0');
@@ -16,11 +16,11 @@ const getCurrentTime = (): string => {
   return `${hours}:${minutes}:${seconds}`;
 };
 
-const getCurrentDateTime = (): string => {
+export const getCurrentDateTime = (): string => {
   return `${getCurrentDate()} ${getCurrentTime()}`;
 };
 
-const amountOfHoursCalc = (amount: number, of: string) => {
+export const amountOfHoursCalc = (amount: number, of: string) => {
   if (of === 'hours') return amount;
   if (of === 'days') return amount * 24;
   if (of === 'weeks') return amount * 24 * 7;
@@ -28,7 +28,7 @@ const amountOfHoursCalc = (amount: number, of: string) => {
   return amount;
 };
 
-const imageUrlToBase64 = async (url: string): Promise<string> => {
+export const imageUrlToBase64 = async (url: string): Promise<string> => {
   try {
     const response = await axios.get(url, { responseType: 'arraybuffer' });
     const base64data = Buffer.from(response.data, 'binary').toString('base64');
@@ -38,10 +38,14 @@ const imageUrlToBase64 = async (url: string): Promise<string> => {
   }
 };
 
-export const helpersUtils = {
-  getCurrentDate,
-  getCurrentTime,
-  getCurrentDateTime,
-  amountOfHoursCalc,
-  imageUrlToBase64,
+export const generateRandomPassword = (length = 12) => {
+  const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+=<>?';
+  let password = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * charset.length);
+    password += charset.charAt(randomIndex);
+  }
+
+  return password;
 };

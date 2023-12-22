@@ -1,17 +1,16 @@
-import axios from 'axios';
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import gmailConfig from '../../config/gmail.config';
-import { Automation, AutomationStatusEnum } from '../automation/automation.model';
-import { IPage, Page } from '../page/page.model';
 import { Post, TPost } from '../../database/models/post.model';
 import { IUser, User } from '../../database/models/user.model';
 import AppService from '../../services/app';
 import { gmailService } from '../../services/gmail.service';
-import { helpersUtils } from '../../utils/helpers.utils';
+import Utils from '../../utils';
 import logger from '../../utils/logger';
+import { Automation, AutomationStatusEnum } from '../automation/automation.model';
 import { Business } from '../business/business.model';
+import { IPage, Page } from '../page/page.model';
 import { FBServices } from './services';
 import { CampaignStatus } from './services/campaign.service';
 import { IFBAd, IFBAdSet, IFBCampaign, IFBRule } from './types';
@@ -65,7 +64,7 @@ export const createAutomation = async (req: Request, res: Response, next: NextFu
   const { accessToken } = req.body.user.platforms.facebook;
   if (!accessToken) throw new Error('Access token is missing');
 
-  const adPauseTime = helpersUtils.amountOfHoursCalc(amount, of);
+  const adPauseTime = Utils.Helpers.amountOfHoursCalc(amount, of);
   const pageAccessToken = await FBServices.Tokens.fetchLongLivedAccessTokenForPage(page.pageId, accessToken);
 
   const newPage = new Page({
@@ -333,40 +332,18 @@ export const promotePost = async (req: Request, res: Response, next: NextFunctio
 };
 
 export const signInWithFacebook = async (req: Request, res: Response, next: NextFunction) => {
-  const { email } = req.body;
-  const { accessToken: fbAccessToken, displayName, photoURL } = req.body;
-  const user = await User.findOne({ email });
-
-  if (user) {
-    user.platforms.facebook.accessToken = fbAccessToken;
-    user.platforms.facebook.isConnect = true;
-    user.picture ? null : (user.picture = photoURL);
-    await user.save();
-
-    const jwtSecretKey = process.env.JWT_SECRET_KEY as string;
-    const accessToken = jwt.sign({ id: user._id }, jwtSecretKey, { expiresIn: '30d' });
-    res.send({ data: accessToken, message: `Welcome Back ${user.username}` });
-    return;
-  }
-
-  const newUser = new User({
-    username: displayName,
-    email,
-    password: 'facebook',
-    picture: photoURL,
-    platforms: {
-      facebook: {
-        isConnect: true,
-        accessToken: fbAccessToken,
-      },
-    },
-  });
-  await newUser.save();
-
+  const { email, accessToken: fbAccessToken, displayName: username, photoURL } = req.body;
+  const password = Utils.Helpers.generateRandomPassword();
+  const user = (await User.findOne({ email })) || new User({ username, email, password });
+  user.platforms.facebook.isConnect = true;
+  user.platforms.facebook.accessToken = fbAccessToken;
+  user.picture = photoURL;
+  user.markModified('platforms.facebook');
+  await user.save();
   const jwtSecretKey = process.env.JWT_SECRET_KEY as string;
-  const accessToken = jwt.sign({ id: newUser._id }, jwtSecretKey, { expiresIn: '30d' });
-
-  res.send({ data: accessToken, message: `Welcome ${newUser.username}` });
+  const accessToken = jwt.sign({ id: user._id }, jwtSecretKey, { expiresIn: '30d' });
+  logger.info(`User ${user.username}[${user._id}] signed in successfully`);
+  res.send({ data: accessToken, message: `Welcome Back ${user.username}` });
 };
 
 export const deleteAutomation = async (req: Request, res: Response, next: NextFunction) => {
@@ -388,7 +365,7 @@ export const postAd = async (req: Request, res: Response, next: NextFunction) =>
   if (!business) throw new Error('Business not found');
   const page = await AppService.Page.get(business.page);
   if (!page) throw new Error('Page not found');
-  const imageBase64: string = await helpersUtils.imageUrlToBase64(adData.adMedia);
+  const imageBase64: string = await Utils.Helpers.imageUrlToBase64(adData.adMedia);
   const image = await FBServices.Others.uploadImage(accessToken, business.businessId, imageBase64);
 
   const creative = await FBServices.Others.createAdCreativeWithImage(accessToken, {

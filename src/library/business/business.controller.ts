@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import AppService from '../../services/app';
 import logger from '../../utils/logger';
 import { FBServices } from '../facebook/services';
 import { IFBAdSet } from '../facebook/types';
@@ -23,40 +22,16 @@ export const postBusiness = async (req: Request, res: Response) => {
   page.user = user._id;
   page.platform = 'facebook';
 
-  const existingPage = await Page.findOne({ pageId: page.pageId });
+  const bPage = await Page.findOneAndUpdate(
+    { pageId: page.pageId },
+    { $setOnInsert: page },
+    { upsert: true, new: true }
+  );
 
-  if (existingPage) {
-    existingPage.picture = page.picture;
-    existingPage.save();
-    const newBusiness = new Business({
-      businessId: adAccount.id,
-      name: adAccount.name,
-      page: existingPage._id,
-      user: user._id,
-      campaign,
-      audience,
-    });
-
-    const newAdSet = await FBServices.adSet.create(accessToken, {
-      accountId: adAccount.id,
-      campaignId: campaign.id,
-      audience: audience,
-      objective: 'POST_ENGAGEMENT',
-    } as IFBAdSet);
-
-    newBusiness.adSetId = newAdSet.id;
-
-    await newBusiness.save();
-    logger.info(`The user ${user.username} created a new business for the page ${page.name}`);
-    return res.status(200).send({ data: newBusiness, message: 'Business created successfully' });
-  }
-
-  const newPage = await AppService.Page.create(page);
-  await newPage.save();
   const newBusiness = new Business({
     businessId: adAccount.id,
     name: adAccount.name,
-    page: newPage._id,
+    page: bPage._id,
     user: user._id,
     campaign,
     audience,
@@ -70,8 +45,8 @@ export const postBusiness = async (req: Request, res: Response) => {
   } as IFBAdSet);
 
   newBusiness.adSetId = newAdSet.id;
-
   await newBusiness.save();
+
   logger.info(`The user ${user.username} created a new business for the page ${page.name}`);
   res.status(200).send({ data: newBusiness, message: 'Business created successfully' });
 };

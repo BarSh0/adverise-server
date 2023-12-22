@@ -3,9 +3,9 @@ import { FBServices } from '.';
 import { FBAdValidate, IFBAd } from '../types/FBAd';
 import { FBAdCreativeValidate, IFBAdCreative } from '../types/FBAdCreative';
 import { FBRuleValidate, IFBRule } from '../types/FBRule';
-import { helpersUtils } from '../../../utils/helpers.utils';
 import logger from '../../../utils/logger';
 import { IAppAdCreative } from '../types/AppAdCreative';
+import Utils from '../../../utils';
 
 const isDevMode = process.env.NODE_ENV === 'development';
 
@@ -73,7 +73,7 @@ export const createAd = async (accessToken: string, ad: IFBAd) => {
 
   let fields = ['id'];
   let params = {
-    name: 'Easy2Ad -' + helpersUtils.getCurrentDate(),
+    name: 'Easy2Ad -' + Utils.Helpers.getCurrentDate(),
     adset_id: ad.adSetId,
     creative: { creative_id: ad.creativeId },
     status: isDevMode ? 'PAUSED' : 'ACTIVE',

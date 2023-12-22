@@ -9,6 +9,6 @@ router.get('/:id', tryCatch(Controllers.Business.getBusiness));
 router.post('/', tryCatch(Controllers.Business.postBusiness));
 router.delete('/:id', tryCatch(Controllers.Business.deleteBusiness));
 
-const automationRoutes = router;
+const businessRoutes = router;
 
-export default automationRoutes;
+export default businessRoutes;
